@@ -3,16 +3,6 @@
 #include "math.h"
 
 
-
-struct poisson{
-    double x; //Position abscisses
-    double y; //Position ordonnées
-    double dir; //Direction de la vitesse
-}
-
-
-
-
 int main(){
 
 int N; //Nombre de poissons (Indicés de 0 à N-1)
@@ -37,6 +27,7 @@ for(int i = 0; i<N){
 int t=0;
 while (t<Tmax){
     // TODO : Si nécessaire, attendre un peu
+    double* dir_temp;
     //Boucle sur tous les poissons i
     for (int i=0; i<N; ++i){
         int indices_za[N]; //Liste des poissons dans la ZA du poisson i
@@ -69,7 +60,7 @@ while (t<Tmax){
                 }
             }
         }
-        traitement(indices_za,indices_zr,indices_zo,i,dir_temps);
+        traitement(indices_za,indices_zr,indices_zo,i,dir_temp,N);
         
     }   
     t++
