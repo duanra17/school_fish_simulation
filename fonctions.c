@@ -36,7 +36,7 @@ void traitement(int* indices_za, int* indices_zr, int* indices_zo, int indP, dou
     float d_o = 0;
     float d_a = 0;
 
-    for(int i=0; i<N, i++){
+    for(int i=0; i<N; i++){
         
     }
 
