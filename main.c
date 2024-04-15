@@ -17,7 +17,7 @@ int Tmax; //Temps maximal de la simulation
 
 //Création du banc de poissons
 struct poisson* banc = malloc(sizeof(struct poisson)*N);
-for(int i = 0; i<N){
+for(int i = 0; i<N; ++i){
     struct poisson P;
     initialisation(P,x_max,y_max);
     banc[i] = P;
@@ -40,7 +40,7 @@ while (t<Tmax){
         }
         //Boucle sur congénères j du poisson i
         for (int j=0; j<N; ++j){
-            if (j=i){
+            if (j==i){
                 ++j;
             }
             if (!dans_angle_mort(banc[i],banc[j])){
