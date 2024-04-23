@@ -28,7 +28,7 @@ for(int i = 0; i<N; ++i){
 int t=0;
 while (t<Tmax){
     // TODO : Si nécessaire, attendre un peu
-    double* dir_temp;
+    double* dir_temp[N]; // Liste des directions des poissons à pour l'instant suivant
     //Boucle sur tous les poissons i
     for (int i=0; i<N; ++i){
         int indices_za[N]; //Liste des poissons dans la ZA du poisson i
@@ -63,10 +63,20 @@ while (t<Tmax){
                 }
             }
         }
-        traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i);
+        traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
         
-    }   
-    t++
+    }
+
+    
+    for (int i=0; i<N; ++i){
+        // Modification de la direction de chaque poisson
+        banc[i].dir = dir_temp[i] + gaussienne(0,10);
+        // Modification de la position des poissons
+        banc[i].x = banc[i].x + s*cos(2*M_PI * banc[i].dir / 360);
+        banc[i].y = banc[i].y + s*sin(2*M_PI * banc[i].dir / 360);
+    }
+
+    t++;
 }
 
 
