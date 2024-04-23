@@ -1,3 +1,8 @@
-int affichage()
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-void render(SDL_Renderer *renderer, SDL_Texture **texture)
+int affichage();
+
+void render(SDL_Renderer *renderer, SDL_Texture **texture);

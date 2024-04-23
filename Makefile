@@ -1,13 +1,19 @@
-CFLAGS=-Wall -Werror -Wfatal-errors
+CC=gcc
+CFLAGS=-Wall -Wextra -std=c99 -g
+LDFLAGS=-lSDL2 -lm -lSDL2_image
+SRC=main.c
+EXECUTABLE=main.x
 
-main.o: main.c 
-	gcc $(CFLAGS) -c main.c
+all: $(EXECUTABLE)
 
-main.x: main.o
-	gcc $(CFLAGS) -o main.x main.o -lm
+$(EXECUTABLE): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+run: $(EXECUTABLE)
+	./$(EXECUTABLE)
+
+debug: $(EXECUTABLE)
+	gdb ./$(EXECUTABLE)
 
 clean:
-	rm *.o
-
-realclean: clean
-	rm *.x
+	rm -f $(EXECUTABLE)
