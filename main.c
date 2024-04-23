@@ -45,7 +45,7 @@ while (t<Tmax){
                 ++j;
             }
             if (j<N){
-                if (!dans_angle_mort(banc[i],banc[j])){
+                if (!dans_angle_mort(banc[i],banc[j],alpha)){
                     // Le poisson j est visible par le poisson i
                     if (distance(banc[i],banc[j])<rr){
                         // Le poisson j est dans la ZR du poisson i
@@ -63,7 +63,7 @@ while (t<Tmax){
                 }
             }
         }
-        traitement(indices_za,indices_zr,indices_zo,i,dir_temp,N);
+        traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i);
         
     }   
     t++
