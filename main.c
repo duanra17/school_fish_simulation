@@ -2,24 +2,26 @@
 #include <stdlib.h>
 #include "math.h"
 
-
 int main(){
 
-int N; //Nombre de poissons (Indicés de 0 à N-1)
-double s; //Norme de la vitesse des poissons
-double alpha; //Champ de perception (angle)
-double ra; //Rayon de la zone d'attraction
-double rr; //Rayon de la zone de répulsion
-double ro; //Rayon de la zone d'orientation
+int N = 100; //Nombre de poissons (Indicés de 0 à N-1)
+double s = 1; //Norme de la vitesse des poissons
+double alpha = 20; //Champ de perception (angle)
+double ra = 100; //Rayon de la zone d'attraction
+double rr = 60; //Rayon de la zone de répulsion
+double ro = 80; //Rayon de la zone d'orientation
 // On a : rr <= ro <= ra
-double x_max; //Bornes de la zone disponible
-double y_max;
-int Tmax; //Temps maximal de la simulation
+double x_max = 500; //Bornes de la zone disponible
+double y_max = 500;
+int Tmax = 100; //Temps maximal de la simulation
 
 //Création du banc de poissons
 struct poisson* banc = malloc(sizeof(struct poisson)*N);
 for(int i = 0; i<N; ++i){
     struct poisson P;
+    P.x = 0;
+    P.y = 0;
+    P.dir = 0;
     initialisation(P,x_max,y_max);
     banc[i] = P;
 }
@@ -28,7 +30,7 @@ for(int i = 0; i<N; ++i){
 int t=0;
 while (t<Tmax){
     // TODO : Si nécessaire, attendre un peu
-    double* dir_temp[N]; // Liste des directions des poissons à pour l'instant suivant
+    double dir_temp[N]; // Liste des directions des poissons à pour l'instant suivant
     //Boucle sur tous les poissons i
     for (int i=0; i<N; ++i){
         int indices_za[N]; //Liste des poissons dans la ZA du poisson i
