@@ -6,6 +6,17 @@ Poissons indicés de 0 à N-1
 */
 #include <stdlib.h>
 #include "math.h"
+#include <time.h>
+
+#ifndef  M_PI
+    #define  M_PI  3.1415926535897932384626433
+#endif
+
+struct poisson{
+    double x; //Position abscisses
+    double y; //Position ordonnées
+    double dir; //Direction de la vitesse
+};
 
 //Initialisation
 void initialisation(struct poisson P, double x_max, double y_max){
@@ -23,41 +34,42 @@ float distance(struct poisson A, struct poisson B){
 
 //Test de l'angle mort
 int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
-// On calcule les angles
-float pseudo_min = (A.dir - (alpha/2))%360;
-float pseudo_max = (A.dir + (alpha/2))%360;
-bool dans_angle_mort;
-float beta = atan((B.y-A.y)/(B.x-A.x)) * 360 / (2*M_PI);
-if (B.x - A.x < 0){
-    // Car arctangente renvoie une valeur entre -pi/2 et pi/2. Il manque donc le cas où beta est entre pi/2 et 3*pi/2
-    beta = beta + 180;
-}
-beta = beta%360;
-// On distingue 3 cas ( cas 1 et 3 confondus): 
-// 0 < dir < alpha/2
-// alpha/2 < dir < 360° - alpha/2
-// 360° - alpha/2 < dir < 360°
-// Cela influe sur quel est le plus grand entre pseudo_max et pseudo_min 
-// (pseudo_max est toujours le plus grand si on n'effectue pas le modulo 360)
+    // On calcule les angles
+    float pseudo_min = (A.dir - (alpha/2))%360;
+    float pseudo_max = (A.dir + (alpha/2))%360;
+    int dans_angle_mort;
+    float beta = atan((B.y-A.y)/(B.x-A.x)) * 360 / (2*M_PI);
+    if (B.x - A.x < 0){
+        // Car arctangente renvoie une valeur entre -pi/2 et pi/2. Il manque donc le cas où beta est entre pi/2 et 3*pi/2
+        beta = beta + 180;
+    }
+    beta = beta%360;
+    // On distingue 3 cas ( cas 1 et 3 confondus): 
+    // 0 < dir < alpha/2
+    // alpha/2 < dir < 360° - alpha/2
+    // 360° - alpha/2 < dir < 360°
+    // Cela influe sur quel est le plus grand entre pseudo_max et pseudo_min 
+    // (pseudo_max est toujours le plus grand si on n'effectue pas le modulo 360)
 
-    if((A.dir < (alpha/2))||(A.dir > 360 - (alpha/2))){ 
-        if ((pseudo_max < beta) && (beta < pseudo_min)){
-            return 1;
+        if((A.dir < (alpha/2))||(A.dir > 360 - (alpha/2))){ 
+            if ((pseudo_max < beta) && (beta < pseudo_min)){
+                return 1;
+            }
+            else {return 0;}
         }
-        else {return 0;}
-    }
-    else{// Cas alpha/2 < A.dir < 360° - alpha/2
-        if ((pseudo_min < beta) && (beta < pseudo_max)){
-            return 0;
+        else{// Cas alpha/2 < A.dir < 360° - alpha/2
+            if ((pseudo_min < beta) && (beta < pseudo_max)){
+                return 0;
+            }
+            else {return 1;}
         }
-        else {return 1;}
-    }
 }
 
 // --------------------------------------------------------------------------
 // Fonctions nécessaires au traitement
 
 double repulsion(int* indices_zr, int N, struct poisson* banc){
+    double tmp;
     int compt = 0;
             for(int j=0; j<N; j++){
                 tmp = tmp + indices_zr[j]*(banc[j].dir); // +180 ~ *-1
