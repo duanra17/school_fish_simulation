@@ -9,7 +9,7 @@ void initialisation(struct poisson P, double x_max, double y_max);
 
 float distance(struct poisson A, struct poisson B);
 
-int dans_angle_mort(struct poisson A, struct poisson B);
+int dans_angle_mort(struct poisson A, struct poisson B, double alpha);
 
 double repulsion(int* indices_zr, int N, struct poisson* banc);
 
