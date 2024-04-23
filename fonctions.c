@@ -148,8 +148,8 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
 
 float gaussienne(double mu, double sigma){
     // On utilise la méthode de Box-Muller pour simuler une loi gaussienne
-    float U1 = (float)rand()/(float)RAND_MAX;
-    float U2 = (float)rand()/(float)RAND_MAX;
+    float U1 = ((float)rand()-(float)RAND_MAX/2)/(float)RAND_MAX;
+    float U2 = ((float)rand()-(float)RAND_MAX/2)/(float)RAND_MAX;
 
     float X = cos(2*M_PI*U1)*sqrt(-2*log(U2));
 
