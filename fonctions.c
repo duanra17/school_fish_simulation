@@ -102,11 +102,9 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
 }
 // --------------------------------------------------------------------------
 
-void traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP, float s){
+int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP){
     /* indices_za, indices_zr et indices_zo indiquent la position des poissons par rapport aux zones
-    du poisson en question.
-    
-    J'ai ajouté le banc de poisson qu'on a oublié.*/
+    du poisson en question.*/
     double d_r = 0;
     double d_o = 0;
     double d_a = 0;
@@ -158,8 +156,16 @@ float gaussienne(double mu, double sigma){
     float N;
 
     N = mu + sigma*X; // N suit une loi normale de moyenne mu et de variance sigma².
-    if(N<0 || N>360){
-        N=0;
+
+    // Pour que la direction soit comprise entre 0 et 360.
+    if (N>360){
+        while(N>360){ 
+            N = N-360;
+        }
+    } else if (N<0){
+        while(N>360){ 
+            N = N+360;
+        }
     }
 
     return N;
