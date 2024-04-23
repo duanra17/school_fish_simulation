@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -std=c99 -g
-LDFLAGS=-lSDL2 -lm -lSDL2_image
+LDFLAGS=-lSDL2 -lm -lSDL2_image fonctions.c graph.c
 SRC=main.c
 EXECUTABLE=main.x
 
