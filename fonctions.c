@@ -18,6 +18,12 @@ struct poisson{
     double dir; //Direction de la vitesse
 };
 
+struct poisson{
+    double x; //Position abscisses
+    double y; //Position ordonnées
+    double dir; //Direction de la vitesse
+};
+
 //Initialisation
 void initialisation(struct poisson P, double x_max, double y_max){
     /*Initialise la position et l'orientation du poisson aléatoirement*/

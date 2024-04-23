@@ -8,10 +8,10 @@
 
 // Fenêtre
 void render(SDL_Renderer *renderer, SDL_Texture **texture){
-    SDL_SetREnderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetResnderDrawColor(renderer, 0, 0, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_Rect rect = {400, 400, 10, 10};
     SDL_RenderFillRect(renderer, &rect);
     SDL_RenderCopy(renderer, *texture,NULL, &rect);
@@ -42,14 +42,14 @@ int affichage(){
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWSPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, IMAGE_WIDTH, IMAGE_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, IMAGE_WIDTH, IMAGE_HEIGHT, SDL_WINDOW_SHOWN);
     if(window == NULL){
-        fprintf(stdrr, "Window creation failed : %s\n", SDL_GetError());
+        fprintf(stderr, "Window creation failed : %s\n", SDL_GetError());
         SDL_Quit();
         return 1;
     }
 
-    SDL_Renderer *renderer = SDL_CreateREnderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(renderer == NULL){
         fprintf(stderr, "Renderer creation failed: %s\n", SDL_GetError());
         SDL_DestroyWindow(window);
