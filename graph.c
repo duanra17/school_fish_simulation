@@ -38,7 +38,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture){
 
 int affichage(){
     if (SDL_Init(SDL_INIT_VIDEO) < 0){
-        fprintf(stderr, "SDL initianlization, failed: %s\n", SDL_GetError());
+        fprintf(stderr, "SDL initialization, failed: %s\n", SDL_GetError());
         return 1;
     }
 
