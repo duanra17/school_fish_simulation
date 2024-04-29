@@ -5,7 +5,7 @@ struct poisson{
     double dir; //Direction de la vitesse
 };
 
-void initialisation(struct poisson P, double x_max, double y_max);
+void initialisation(struct poisson* P, double x_max, double y_max);
 
 float distance(struct poisson A, struct poisson B);
 

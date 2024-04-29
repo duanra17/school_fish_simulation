@@ -27,7 +27,7 @@ int main(){
         P.x = 0;
         P.y = 0;
         P.dir = 0;
-        initialisation(P,x_max,y_max);
+        initialisation(&P,x_max,y_max);
         banc[i] = P;
     }
 
