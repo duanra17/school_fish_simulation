@@ -11,16 +11,16 @@
 
 int main(){
 
-    int N = 12; //Nombre de poissons (Indicés de 0 à N-1)
-    double s = 1; //Norme de la vitesse des poissons
-    double alpha = 20; //Champ de perception (angle)
-    double ra = 100; //Rayon de la zone d'attraction
-    double rr = 60; //Rayon de la zone de répulsion
-    double ro = 80; //Rayon de la zone d'orientation
+    int N = 12; // Nombre de poissons (Indicés de 0 à N-1)
+    double s = 1; // Norme de la vitesse des poissons
+    double alpha = 20; // Champ de perception (angle)
+    double ra = 100; // Rayon de la zone d'attraction
+    double rr = 60; // Rayon de la zone de répulsion
+    double ro = 80; // Rayon de la zone d'orientation
     // On a : rr <= ro <= ra
-    double x_max = 500; //Bornes de la zone disponible
+    double x_max = 500; // Bornes de la zone disponible
     double y_max = 500;
-    int Tmax = 10; //Temps maximal de la simulation
+    int Tmax = 10; // Temps maximal de la simulation
 
     //Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
@@ -38,24 +38,23 @@ int main(){
     //Boucle temporelle
     int t=0;
     while (t<Tmax){
-        // TODO : Si nécessaire, attendre un peu
         affichage();
-        double dir_temp[N]; // Liste des directions des poissons à pour l'instant suivant
-        // Remplissage de dir_temp, permet de garder la même valeur si traitement() ne modifie rien dans la suite du code
+        double dir_temp[N]; // Liste des directions des poissons à l'instant suivant
+        // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){
             dir_temp[i] = banc[i].dir;
         }
         //Boucle sur tous les poissons i
         for (int i=0; i<N; ++i){
-            int indices_za[N]; //Liste des poissons dans la ZA du poisson i
-            int indices_zr[N]; //idem pour ZR
-            int indices_zo[N]; //idem pour ZO
+            int indices_za[N]; // Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
+            int indices_zr[N]; // idem pour ZR
+            int indices_zo[N]; // idem pour ZO
             for (int j=0; j<N; ++j){
                 indices_za[j] = 0;
                 indices_zr[j] = 0;
                 indices_zo[j] = 0;
             }
-            //Boucle sur congénères j du poisson i
+            // Boucle sur congénères j du poisson i
             for (int j=0; j<N; ++j){
                 if (j==i){
                     ++j;
@@ -94,6 +93,7 @@ int main(){
 
         t++;
     }
+
     return 0;
 
 }

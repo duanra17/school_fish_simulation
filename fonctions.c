@@ -1,9 +1,5 @@
-/*Contient les fonctions du projet*/
-/*
-Attention!
-Poissons indicés de 0 à N-1
+/*Contient les fonctions utiles à la simulation*/
 
-*/
 #include <stdlib.h>
 #include "math.h"
 #include <time.h>
@@ -12,15 +8,17 @@ Poissons indicés de 0 à N-1
     #define  M_PI  3.1415926535897932384626433
 #endif
 
+/*Poissons indicés de 0 à N-1*/
 struct poisson{
     double x; //Position abscisses
     double y; //Position ordonnées
-    double dir; //Direction de la vitesse
+    double dir; //Direction de la vitesse (angle entre 0 et 360°)
 };
 
 //Initialisation
 void initialisation(struct poisson *P, double x_max, double y_max){
     /*Initialise la position et l'orientation du poisson aléatoirement*/
+    // On se place dans un rectangle [0;x_max]*[0;y_max]
     srand(time(NULL));
     P->x = (float)rand()/(float)RAND_MAX * x_max;
     P->y = (float)rand()/(float)RAND_MAX * y_max;
@@ -43,47 +41,46 @@ double modulo360(double A){
             A = A+360;
         }
     }
-
     return A;
 }
 
 //Test de l'angle mort
 int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
-    // On calcule les angles
+    // Entrée : poissons A et B et l'angle de vision alpha.
+    // Sortie : int indiquant si le poisson B est dans l'angle mort de A (renvoie 1) ou pas (renvoie 0).
+    
+    // Calcul des angles
     float pseudo_min = modulo360(A.dir - (alpha/2));
     float pseudo_max = modulo360(A.dir + (alpha/2));
     
-    float beta = atan((B.y-A.y)/(B.x-A.x)) * 360 / (2*M_PI);
+    float beta = atan((B.y-A.y)/(B.x-A.x)) * 360 / (2*M_PI); // angle de B dans un repère polaire
     if (B.x - A.x < 0){
         // Car arctangente renvoie une valeur entre -pi/2 et pi/2. Il manque donc le cas où beta est entre pi/2 et 3*pi/2
         beta = beta + 180;
     }
     beta = modulo360(beta);
-    // On distingue 3 cas ( cas 1 et 3 confondus): 
-    // 0 < dir < alpha/2
-    // alpha/2 < dir < 360° - alpha/2
-    // 360° - alpha/2 < dir < 360°
-    // Cela influe sur quel est le plus grand entre pseudo_max et pseudo_min 
-    // (pseudo_max est toujours le plus grand si on n'effectue pas le modulo 360)
 
-        if((A.dir < (alpha/2))||(A.dir > 360 - (alpha/2))){ 
-            if ((pseudo_max < beta) && (beta < pseudo_min)){
-                return 1;
-            }
-            else {return 0;}
+    // Distinction de cas pour la condition sur l'angle beta
+    if((A.dir < (alpha/2))||(A.dir > 360 - (alpha/2))){ 
+        if ((pseudo_max < beta) && (beta < pseudo_min)){
+            return 1;
         }
-        else{// Cas alpha/2 < A.dir < 360° - alpha/2
-            if ((pseudo_min < beta) && (beta < pseudo_max)){
-                return 0;
-            }
-            else {return 1;}
+        else {return 0;}
+    }
+    else{// Cas alpha/2 < A.dir < 360° - alpha/2
+        if ((pseudo_min < beta) && (beta < pseudo_max)){
+            return 0;
         }
+        else {return 1;}
+    }
 }
 
 // --------------------------------------------------------------------------
 // Fonctions nécessaires au traitement
 
 double repulsion(int* indices_zr, int N, struct poisson* banc){
+    // indices_zr: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZR du poisson i
+    // Renvoie la nouvelle direction et position du poisson, dans le cas de la répulsion
     double tmp = 0;
     int compt = 0;
             for(int j=0; j<N; j++){
@@ -97,6 +94,8 @@ double repulsion(int* indices_zr, int N, struct poisson* banc){
 }
 
 double attraction(int* indices_za, int N, struct poisson* banc){
+    // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
+    // Renvoie la nouvelle direction et position du poisson, dans le cas de l'attraction
     int compt = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
@@ -111,9 +110,12 @@ double attraction(int* indices_za, int N, struct poisson* banc){
 }
 
 double orientation(int* indices_zo, int N, struct poisson* banc){ 
-// théoriquement, on aurait besoin de la vitesse, mais la vitesse du poisson et sa direction sont colinéaires. 
-// On n'a donc pas besoin de la prendre en compte. 
-// Il faut modifier cette fonction dans le cas où les poissons ont des vitesses différentes, avec une liste des vitesses à créer en amont. 
+    // indices_zo: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZO du poisson i
+    // Renvoie la nouvelle direction et position du poisson, dans le cas de l'orientation
+
+    // Théoriquement, on aurait besoin de la vitesse, mais la vitesse du poisson et sa direction sont colinéaires. 
+    // On n'a donc pas besoin de la prendre en compte. 
+    // Cette fonction entre dans le cas d'une même vitesse pour tous les poissons, sinon il faut créer une liste des vitesses en amont. 
     int compt = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
@@ -129,6 +131,8 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
 // --------------------------------------------------------------------------
 
 int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP){
+    // Ne renvoie rien (d'intéressant).
+
     /* indices_za, indices_zr et indices_zo indiquent la position des poissons par rapport aux zones
     du poisson en question.*/
 
@@ -138,9 +142,7 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
 
     double tmp = 0; // Variable temporaire */
 
-    // Pour éviter de créer des boucles trop similaires, je crée trois autres fonctions : repulsion(), attraction() et orientation().
-
-    // On teste si les poissons sont dans les zonesde répulsion, d'attraction et d'orientation
+    // On teste si les poissons sont dans les zones de répulsion, d'attraction et d'orientation
     // Les variables de test sont initialisées à 0
     int test_a = 0;
     int test_o = 0;
