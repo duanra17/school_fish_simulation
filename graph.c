@@ -57,7 +57,7 @@ int affichage(){
         return 1;
     }
     SDL_Texture *texture;
-    // Comm à recopier
+    // loadTexture(renderer, &texture); // Replace "particle.png" with your image file
 
     SDL_Event event;
     int quit = 0;

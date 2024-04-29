@@ -3,13 +3,15 @@
 #include "graph.h"
 #include "fonctions.h"
 
+#include <stdio.h>
+
 #ifndef  M_PI
     #define  M_PI  3.1415926535897932384626433
 #endif
 
 int main(){
 
-    int N = 100; //Nombre de poissons (Indicés de 0 à N-1)
+    int N = 12; //Nombre de poissons (Indicés de 0 à N-1)
     double s = 1; //Norme de la vitesse des poissons
     double alpha = 20; //Champ de perception (angle)
     double ra = 100; //Rayon de la zone d'attraction
@@ -18,17 +20,19 @@ int main(){
     // On a : rr <= ro <= ra
     double x_max = 500; //Bornes de la zone disponible
     double y_max = 500;
-    int Tmax = 100; //Temps maximal de la simulation
+    int Tmax = 10; //Temps maximal de la simulation
 
     //Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
-    for(int i = 0; i<N; ++i){
+    for(int i = 0; i<N; i++){
         struct poisson P;
         P.x = 0;
         P.y = 0;
         P.dir = 0;
         initialisation(&P,x_max,y_max);
         banc[i] = P;
+
+        //printf("%f %f %f\n", banc[i].x, banc[i].y, banc[i].dir);
     }
 
     //Boucle temporelle
@@ -37,6 +41,10 @@ int main(){
         // TODO : Si nécessaire, attendre un peu
         affichage();
         double dir_temp[N]; // Liste des directions des poissons à pour l'instant suivant
+        // Remplissage de dir_temp, permet de garder la même valeur si traitement() ne modifie rien dans la suite du code
+        for (int i=0; i<N; ++i){
+            dir_temp[i] = banc[i].dir;
+        }
         //Boucle sur tous les poissons i
         for (int i=0; i<N; ++i){
             int indices_za[N]; //Liste des poissons dans la ZA du poisson i
@@ -72,7 +80,7 @@ int main(){
                 }
             }
             traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
-            
+
         }
 
         
@@ -87,6 +95,5 @@ int main(){
         t++;
     }
     return 0;
-
 
 }
