@@ -19,14 +19,13 @@ struct poisson{
 void initialisation(struct poisson *P, double x_max, double y_max){
     /*Initialise la position et l'orientation du poisson aléatoirement*/
     // On se place dans un rectangle [0;x_max]*[0;y_max]
-    srand(time(NULL));
-    P->x = (float)rand()/(float)RAND_MAX * x_max;
-    P->y = (float)rand()/(float)RAND_MAX * y_max;
-    P->dir = (float)rand()/(float)RAND_MAX * 360;
+    P->x = (double)rand()/(double)RAND_MAX * x_max;
+    P->y = (double)rand()/(double)RAND_MAX * y_max;
+    P->dir = (double)rand()/(double)RAND_MAX * 360;
 }
 
 //Distance entre 2 poissons
-float distance(struct poisson A, struct poisson B){
+double distance(struct poisson A, struct poisson B){
     return sqrt( (B.x-A.x)*(B.x-A.x) + (B.y-A.y)*(B.y-A.y) );
 }
 
@@ -50,10 +49,10 @@ int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
     // Sortie : int indiquant si le poisson B est dans l'angle mort de A (renvoie 1) ou pas (renvoie 0).
     
     // Calcul des angles
-    float pseudo_min = modulo360(A.dir - (alpha/2));
-    float pseudo_max = modulo360(A.dir + (alpha/2));
+    double pseudo_min = modulo360(A.dir - (alpha/2));
+    double pseudo_max = modulo360(A.dir + (alpha/2));
     
-    float beta = atan((B.y-A.y)/(B.x-A.x)) * 360 / (2*M_PI); // angle de B dans un repère polaire
+    double beta = atan((B.y-A.y)/(B.x-A.x)) * 360 / (2*M_PI); // angle de B dans un repère polaire
     if (B.x - A.x < 0){
         // Car arctangente renvoie une valeur entre -pi/2 et pi/2. Il manque donc le cas où beta est entre pi/2 et 3*pi/2
         beta = beta + 180;
@@ -179,12 +178,12 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
     return(0); //Pour retirer un Warning à la compilation
 }
 
-float gaussienne(double mu, double sigma){
+double gaussienne(double mu, double sigma){
     // On utilise la méthode de Box-Muller pour simuler une loi gaussienne
-    float U1 = ((float)rand())/(float)RAND_MAX;
-    float U2 = ((float)rand())/(float)RAND_MAX;
+    double U1 = ((double)rand())/(double)RAND_MAX;
+    double U2 = ((double)rand())/(double)RAND_MAX;
 
-    float X = cos(2*M_PI*U1)*sqrt(-2*log(U2));
+    double X = cos(2*M_PI*U1)*sqrt(-2*log(U2));
 
     double N;
 

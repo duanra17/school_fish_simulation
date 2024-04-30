@@ -7,7 +7,7 @@ struct poisson{
 
 void initialisation(struct poisson* P, double x_max, double y_max);
 
-float distance(struct poisson A, struct poisson B);
+double distance(struct poisson A, struct poisson B);
 
 double modulo360(double A);
 
@@ -21,4 +21,4 @@ double orientation(int* indices_zo, int N, struct poisson* banc);
 
 int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP);
 
-float gaussienne(double mu, double sigma);
+double gaussienne(double mu, double sigma);

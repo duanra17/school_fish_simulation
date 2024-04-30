@@ -2,16 +2,17 @@
 #include <math.h>
 #include "graph.h"
 #include "fonctions.h"
-
+#include <time.h>
 #include <stdio.h>
 
 #ifndef  M_PI
     #define  M_PI  3.1415926535897932384626433
 #endif
 
+
 int main(){
 
-    int N = 2; // Nombre de poissons (Indicés de 0 à N-1)
+    int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
     double s = 1; // Norme de la vitesse des poissons
     double alpha = 20; // Champ de perception (angle)
     double ra = 100; // Rayon de la zone d'attraction
@@ -20,29 +21,42 @@ int main(){
     // On a : rr <= ro <= ra
     double x_max = 500; // Bornes de la zone disponible
     double y_max = 500;
-    int Tmax = 1; // Temps maximal de la simulation
+    int Tmax = 2; // Temps maximal de la simulation
+
+    srand(time(NULL));
 
     //Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
+
     for(int i = 0; i<N; i++){
         initialisation(&banc[i],x_max,y_max);
-        printf("%f %f %f\n", banc[i].x, banc[i].y, banc[i].dir);
+        //printf("%f %f %f\n", banc[i].x, banc[i].y, banc[i].dir);
     }
+
+    double* dir_temp = malloc(sizeof(double)*N);// Liste des directions des poissons à l'instant suivant
+    
+    if (dir_temp == NULL) { //Test du malloc
+    printf("Erreur d'allocation de mémoire\n");
+    return 1;
+        }
+
+    int* indices_za = malloc(sizeof(int)*N); // Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
+    int* indices_zr = malloc(sizeof(int)*N); // idem pour ZR
+    int* indices_zo = malloc(sizeof(int)*N); // idem pour ZO
 
     //Boucle temporelle
     int t=0;
     while (t<Tmax){
-        affichage();
-        double dir_temp[N]; // Liste des directions des poissons à l'instant suivant
+        affichage(banc,N);
+
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){
             dir_temp[i] = banc[i].dir;
         }
+        
         //Boucle sur tous les poissons i
         for (int i=0; i<N; ++i){
-            int indices_za[N]; // Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
-            int indices_zr[N]; // idem pour ZR
-            int indices_zo[N]; // idem pour ZO
+            
             for (int j=0; j<N; ++j){
                 indices_za[j] = 0;
                 indices_zr[j] = 0;
@@ -52,8 +66,7 @@ int main(){
             for (int j=0; j<N; ++j){
                 if (j==i){
                     ++j;
-                }
-                if (j<N){
+                }else{
                     if (!dans_angle_mort(banc[i],banc[j],alpha)){
                         // Le poisson j est visible par le poisson i
                         if (distance(banc[i],banc[j])<rr){
@@ -74,21 +87,26 @@ int main(){
             }
             traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
         }
-
-        
-        for (int i=0; i<N; ++i){
+/*
+        for (int i=0; i<N; ++i){/*
             // Modification de la direction de chaque poisson
             banc[i].dir = dir_temp[i] + gaussienne(0,10);
             // Modification de la position des poissons
             banc[i].x = banc[i].x + s*cos(2*M_PI * banc[i].dir / 360);
             banc[i].y = banc[i].y + s*sin(2*M_PI * banc[i].dir / 360);
-        }
+            
 
+           printf("%f\n",dir_temp[i]);
+        }
+        printf("t = %d\n",t);*/
         t++;
     }
     // Fin de la boucle temporelle
-
+    free(dir_temp);
     free(banc);
+    free(indices_za);
+    free(indices_zo);
+    free(indices_zr);
 
     return 0;
 
