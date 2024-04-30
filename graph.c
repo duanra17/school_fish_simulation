@@ -14,7 +14,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture){
     SDL_RenderClear(renderer);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_Rect rect = {400, 400, 10, 10};
+    SDL_Rect rect = {300, 300, 10, 10};
     SDL_RenderFillRect(renderer, &rect);
     SDL_RenderCopy(renderer, *texture,NULL, &rect);
     // SDL RenderCopyEx (renderer,∗texture, NULL, &destRect,angle, NULL, SDL_FLIP_NONE);

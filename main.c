@@ -11,7 +11,7 @@
 
 int main(){
 
-    int N = 12; // Nombre de poissons (Indicés de 0 à N-1)
+    int N = 15; // Nombre de poissons (Indicés de 0 à N-1)
     double s = 1; // Norme de la vitesse des poissons
     double alpha = 20; // Champ de perception (angle)
     double ra = 100; // Rayon de la zone d'attraction
@@ -20,7 +20,7 @@ int main(){
     // On a : rr <= ro <= ra
     double x_max = 500; // Bornes de la zone disponible
     double y_max = 500;
-    int Tmax = 10; // Temps maximal de la simulation
+    int Tmax = 5; // Temps maximal de la simulation
 
     //Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
@@ -79,7 +79,6 @@ int main(){
                 }
             }
             traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
-
         }
 
         
@@ -93,6 +92,9 @@ int main(){
 
         t++;
     }
+    // Fin de la boucle temporelle
+
+    free(banc);
 
     return 0;
 
