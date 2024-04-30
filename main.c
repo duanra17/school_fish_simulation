@@ -11,7 +11,7 @@
 
 int main(){
 
-    int N = 10; // Nombre de poissons (Indicés de 0 à N-1)
+    int N = 2; // Nombre de poissons (Indicés de 0 à N-1)
     double s = 1; // Norme de la vitesse des poissons
     double alpha = 20; // Champ de perception (angle)
     double ra = 100; // Rayon de la zone d'attraction
