@@ -30,7 +30,6 @@ int main(){
 
     for(int i = 0; i<N; i++){
         initialisation(&banc[i],x_max,y_max);
-        //printf("%f %f %f\n", banc[i].x, banc[i].y, banc[i].dir);
     }
 
     double* dir_temp = malloc(sizeof(double)*N);// Liste des directions des poissons à l'instant suivant
@@ -47,7 +46,7 @@ int main(){
     //Boucle temporelle
     int t=0;
     while (t<Tmax){
-        affichage(); //banc,N
+        affichage(banc,N); 
 
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){
@@ -85,18 +84,17 @@ int main(){
                     }
                 }
             }
-            //traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
+            traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
         }
         printf("Sortie du %dème while_n",t);
-        for (int i=0; i<N; ++i){/*
+        for (int i=0; i<N; ++i){
             // Modification de la direction de chaque poisson
             banc[i].dir = dir_temp[i] + gaussienne(0,10);
             // Modification de la position des poissons
             banc[i].x = banc[i].x + s*cos(2*M_PI * banc[i].dir / 360);
             banc[i].y = banc[i].y + s*sin(2*M_PI * banc[i].dir / 360);
-            */
-
-           printf("%f\n",dir_temp[i]);
+            
+           printf("%d\n",i);
         }
         printf("t = %d\n",t);
         t++;
