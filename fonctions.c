@@ -80,7 +80,7 @@ int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
 
 double repulsion(int* indices_zr, int N, struct poisson* banc){
     // indices_zr: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZR du poisson i
-    // Renvoie la nouvelle direction et position du poisson, dans le cas de la répulsion
+    // Renvoie la nouvelle direction du poisson, dans le cas de la répulsion
     double tmp = 0;
     int compt = 0;
             for(int j=0; j<N; j++){
@@ -95,7 +95,7 @@ double repulsion(int* indices_zr, int N, struct poisson* banc){
 
 double attraction(int* indices_za, int N, struct poisson* banc){
     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
-    // Renvoie la nouvelle direction et position du poisson, dans le cas de l'attraction
+    // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
     int compt = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
@@ -111,7 +111,7 @@ double attraction(int* indices_za, int N, struct poisson* banc){
 
 double orientation(int* indices_zo, int N, struct poisson* banc){ 
     // indices_zo: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZO du poisson i
-    // Renvoie la nouvelle direction et position du poisson, dans le cas de l'orientation
+    // Renvoie la nouvelle direction du poisson, dans le cas de l'orientation
 
     // Théoriquement, on aurait besoin de la vitesse, mais la vitesse du poisson et sa direction sont colinéaires. 
     // On n'a donc pas besoin de la prendre en compte. 
