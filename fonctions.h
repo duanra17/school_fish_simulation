@@ -1,4 +1,7 @@
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 struct poisson{
     double x; //Position abscisses
     double y; //Position ordonnées
@@ -22,3 +25,9 @@ double orientation(int* indices_zo, int N, struct poisson* banc);
 int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP);
 
 double gaussienne(double mu, double sigma);
+
+int affichage(struct poisson* banc, int N);
+
+void render(SDL_Renderer *renderer, SDL_Texture **texture);
+
+void  loadTexture(SDL_Renderer *renderer, SDL_Texture *texture, struct poisson* banc, int N);
