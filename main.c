@@ -11,7 +11,7 @@
 
 int main(){
 
-    int N = 15; // Nombre de poissons (Indicés de 0 à N-1)
+    int N = 10; // Nombre de poissons (Indicés de 0 à N-1)
     double s = 1; // Norme de la vitesse des poissons
     double alpha = 20; // Champ de perception (angle)
     double ra = 100; // Rayon de la zone d'attraction
@@ -25,14 +25,8 @@ int main(){
     //Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
     for(int i = 0; i<N; i++){
-        struct poisson P;
-        P.x = 0;
-        P.y = 0;
-        P.dir = 0;
-        initialisation(&P,x_max,y_max);
-        banc[i] = P;
-
-        //printf("%f %f %f\n", banc[i].x, banc[i].y, banc[i].dir);
+        initialisation(&banc[i],x_max,y_max);
+        printf("%f %f %f\n", banc[i].x, banc[i].y, banc[i].dir);
     }
 
     //Boucle temporelle
