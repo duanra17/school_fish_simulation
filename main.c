@@ -20,7 +20,7 @@ int main(){
     // On a : rr <= ro <= ra
     double x_max = 500; // Bornes de la zone disponible
     double y_max = 500;
-    int Tmax = 2; // Temps maximal de la simulation
+    int Tmax = 60; // Temps maximal de la simulation
 
     srand(time(NULL));
 
@@ -41,6 +41,13 @@ int main(){
     int* indices_za = malloc(sizeof(int)*N); // Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
     int* indices_zr = malloc(sizeof(int)*N); // idem pour ZR
     int* indices_zo = malloc(sizeof(int)*N); // idem pour ZO
+
+    // Initialisation de l'affichage 
+    // TODO : 
+    // fonction d'initialisation de l'affiche (en gros c'est la majorité de la fonction affichage)
+    // mettre la fin de affichage (la boucle ou le render() et SDL_Delay()) dans le main 
+
+
 
     //Boucle temporelle
     int t=0;
@@ -104,6 +111,11 @@ int main(){
     free(indices_za);
     free(indices_zo);
     free(indices_zr);
+
+    /* A mettre :
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    */
 
     return 0;
 
