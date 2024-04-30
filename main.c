@@ -20,7 +20,7 @@ int main(){
     // On a : rr <= ro <= ra
     double x_max = 500; // Bornes de la zone disponible
     double y_max = 500;
-    int Tmax = 5; // Temps maximal de la simulation
+    int Tmax = 1; // Temps maximal de la simulation
 
     //Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
