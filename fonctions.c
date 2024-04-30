@@ -186,7 +186,7 @@ float gaussienne(double mu, double sigma){
 
     float X = cos(2*M_PI*U1)*sqrt(-2*log(U2));
 
-    float N;
+    double N;
 
     N = mu + sigma*X; // N suit une loi normale de moyenne mu et de variance sigma².
 
