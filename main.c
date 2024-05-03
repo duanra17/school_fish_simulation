@@ -8,22 +8,21 @@
     #define  M_PI  3.1415926535897932384626433
 #endif
 
-#define IMAGE_WIDTH 1200
-#define IMAGE_HEIGHT 800
-
-
 int main(){
 
     int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 1; // Norme de la vitesse des poissons
+    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
     double alpha = 20; // Champ de perception (angle)
-    double ra = 100; // Rayon de la zone d'attraction
-    double rr = 60; // Rayon de la zone de répulsion
-    double ro = 80; // Rayon de la zone d'orientation
+    double theta = 30; // Vitesse de rotation du poisson (°/ms)
+    unsigned int tau = 10; // En ms
+    double x_max = 1000; // Bornes de la zone disponible
+    double y_max = 1000;
+
+    double rr = x_max*1/1000; // Rayon de la zone de répulsion
+    double ro = x_max*2/1000; // Rayon de la zone d'orientation
+    double ra = x_max*3/1000; // Rayon de la zone d'attraction
     // On a : rr <= ro <= ra
-    double x_max = 500; // Bornes de la zone disponible
-    double y_max = 500;
-    int Tmax = 1000; // Temps maximal de la simulation
+
 
     srand(time(NULL));
 
@@ -46,13 +45,12 @@ int main(){
     int* indices_zo = malloc(sizeof(int)*N); // idem pour ZO
 
     // Initialisation de l'affichage 
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0){
         fprintf(stderr, "SDL initialization, failed: %s\n", SDL_GetError());
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, IMAGE_WIDTH, IMAGE_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x_max, y_max, SDL_WINDOW_SHOWN);
     if(window == NULL){
         fprintf(stderr, "Window creation failed : %s\n", SDL_GetError());
         SDL_Quit();
@@ -67,8 +65,6 @@ int main(){
         return 1;
     }
 
-    //SDL_Texture *texture;
-    //loadTexture(renderer, texture);
     SDL_Surface * surface = IMG_Load("poisson.png");
     if (surface == NULL){
         fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
@@ -76,27 +72,29 @@ int main(){
         exit(1);
     }
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    // *texture = SDL_CreateTextureFromSurface(renderer, surface);    
     SDL_FreeSurface(surface);
     if (texture == NULL){
-    // if (*texture == NULL){
         fprintf(stderr, "Failed to create texture: %s \n ", SDL_GetError());
         SDL_Quit();
         exit(1);
     }
 
-
-
-    //Boucle temporelle
-    int t=0;
-    while (t<Tmax){
-
+    // Boucle temporelle
+    SDL_Event event;
+    int quit = 0;
+    while (!quit){
+        // Fermeture de la fenêtre
+        while (SDL_PollEvent(&event) != 0){
+            if (event.type == SDL_QUIT) {
+                quit = 1;
+            }
+        }
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){
             dir_temp[i] = banc[i].dir;
         }
         
-        //Boucle sur tous les poissons i
+        // Boucle sur tous les poissons i
         for (int i=0; i<N; ++i){
             
             for (int j=0; j<N; ++j){
@@ -131,20 +129,24 @@ int main(){
         }
         for (int i=0; i<N; ++i){
             // Modification de la direction de chaque poisson
-            banc[i].dir = dir_temp[i] + gaussienne(0,10);
+            double nouvelle_dir = dir_temp[i] + gaussienne(0,5);
+            if (nouvelle_dir - banc[i].dir < theta*tau){
+                banc[i].dir = nouvelle_dir;
+            }
+            else{
+                banc[i].dir = theta*tau;
+            }
+            
             // Modification de la position des poissons
-            banc[i].x = banc[i].x + s*cos(2*M_PI * banc[i].dir / 360);
-            banc[i].y = banc[i].y + s*sin(2*M_PI * banc[i].dir / 360);
+            banc[i].x = banc[i].x + s*tau*cos(2*M_PI * banc[i].dir / 360);
+            banc[i].y = banc[i].y + s*tau*sin(2*M_PI * banc[i].dir / 360);
             
         }
         // Render the updated positions
         render(renderer, &texture, banc, N);
         
         //Delay to control the frame rate
-        SDL_Delay(10); // en ms
-
-
-        t++;
+        SDL_Delay(tau); // en ms
     }
     // Fin de la boucle temporelle
     free(dir_temp);
@@ -155,7 +157,6 @@ int main(){
 
     SDL_DestroyWindow(window);
     SDL_Quit();
-    
 
     return 0;
 

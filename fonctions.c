@@ -210,7 +210,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    //SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_Rect * rects = malloc(sizeof(SDL_Rect)*N);
     // SDL_Rect {int x, int y, int w, int h}
 
@@ -222,8 +222,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
     
         SDL_RenderFillRect(renderer, &rects[i]);
         SDL_RenderCopy(renderer, *texture, NULL, &rects[i]);
-        // SDL_RenderCopyEx (renderer,*texture, NULL, NULL, 50, NULL, SDL_FLIP_NONE);
-        // remplacer 0 par l'angle de rotation
+        SDL_RenderCopyEx (renderer,*texture, NULL, &rects[i], banc[i].dir, NULL, SDL_FLIP_HORIZONTAL);
     }
     SDL_RenderPresent(renderer);
 }
@@ -247,6 +246,7 @@ void  loadTexture(SDL_Renderer *renderer, SDL_Texture *texture){
     }
 }
 
+// Fonction à supprimer éventuellement
 int affichage(struct poisson* banc, int N){
     if (SDL_Init(SDL_INIT_VIDEO) < 0){
         fprintf(stderr, "SDL initialization, failed: %s\n", SDL_GetError());
