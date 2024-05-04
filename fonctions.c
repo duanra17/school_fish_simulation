@@ -198,6 +198,35 @@ double gaussienne(double mu, double sigma){
     return N;
 }
 
+void mur(struct poisson* P, double s,double tau, double x_max, double y_max){
+    // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
+    double d_bord = s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
+
+    if(P->y<d_bord){
+        if(P->dir<180){
+            P->dir = modulo360(-(P->dir));
+        }
+    }
+    if(P->y>y_max-d_bord){
+        if(P->dir>180){
+            P->dir = modulo360(-(P->dir));
+        }
+    }
+
+    if(P->x<d_bord){
+        if(P->dir>90 && P->dir<270){
+            P->dir = modulo360(180-(P->dir));
+        }
+    }
+    if(P->x>x_max-d_bord){
+        if(P->dir<90 || P->dir>270){
+            P->dir = modulo360(180-(P->dir));
+        }
+    }
+}
+
+
+
 
 // --------------------------------------------------------------------------
 // Fonctions d'affichage graphique
@@ -220,8 +249,8 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
         rects[i].w = 30;
         rects[i].h = 30;
     
-        SDL_RenderFillRect(renderer, &rects[i]);
-        SDL_RenderCopy(renderer, *texture, NULL, &rects[i]);
+        //SDL_RenderFillRect(renderer, &rects[i]); // Crée un carré indésirable
+        //SDL_RenderCopy(renderer, *texture, NULL, &rects[i]); // redondant
         SDL_RenderCopyEx (renderer,*texture, NULL, &rects[i], banc[i].dir, NULL, SDL_FLIP_HORIZONTAL);
     }
     SDL_RenderPresent(renderer);

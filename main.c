@@ -14,13 +14,13 @@ int main(){
     double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
     double alpha = 20; // Champ de perception (angle)
     double theta = 30; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 10; // En ms
+    unsigned int tau = 100; // En ms
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 1000;
 
-    double rr = x_max*1/1000; // Rayon de la zone de répulsion
-    double ro = x_max*2/1000; // Rayon de la zone d'orientation
-    double ra = x_max*3/1000; // Rayon de la zone d'attraction
+    double rr = x_max*2/100; // Rayon de la zone de répulsion
+    double ro = x_max*4/100; // Rayon de la zone d'orientation
+    double ra = x_max*6/100; // Rayon de la zone d'attraction
     // On a : rr <= ro <= ra
 
 
@@ -65,7 +65,7 @@ int main(){
         return 1;
     }
 
-    SDL_Surface * surface = IMG_Load("poisson.png");
+    SDL_Surface * surface = IMG_Load("poissonbis.png");
     if (surface == NULL){
         fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
         SDL_Quit();
@@ -136,7 +136,11 @@ int main(){
             else{
                 banc[i].dir = theta*tau;
             }
-            
+
+            // On vérifie que le poisson ne fonce pas dans le mur
+            mur(&banc[i], s, tau, x_max, y_max);
+
+
             // Modification de la position des poissons
             banc[i].x = banc[i].x + s*tau*cos(2*M_PI * banc[i].dir / 360);
             banc[i].y = banc[i].y + s*tau*sin(2*M_PI * banc[i].dir / 360);
