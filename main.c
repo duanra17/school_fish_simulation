@@ -130,7 +130,7 @@ int main(){
         }
         for (int i=0; i<N; ++i){
             // Modification de la direction de chaque poisson
-            double nouvelle_dir = dir_temp[i] + gaussienne(0,sigma2);
+            double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,sigma2));
             if (nouvelle_dir - banc[i].dir < theta*tau){
                 banc[i].dir = nouvelle_dir;
             }

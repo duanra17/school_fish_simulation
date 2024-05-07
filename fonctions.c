@@ -105,9 +105,6 @@ double attraction(int* indices_za, int N, struct poisson* banc){
                 compt++;
             }
             tmp = modulo360(tmp/compt);
-            while(tmp>360){
-                tmp = tmp-360;
-            }
             return(tmp);
 }
 
