@@ -11,10 +11,11 @@
 int main(){
 
     int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
-    double alpha = 20; // Champ de perception (angle)
+    double s = 0.05; // Norme de la vitesse des poissons (longueur/ms)
+    double alpha = 360; // Champ de perception (angle)
     double theta = 30; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 100; // En ms
+    unsigned int tau = 50; // En ms
+    double sigma2 = 2; // Variance de la gaussienne
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 1000;
 
@@ -65,7 +66,7 @@ int main(){
         return 1;
     }
 
-    SDL_Surface * surface = IMG_Load("poissonbis.png");
+    SDL_Surface * surface = IMG_Load("poissonter.png");
     if (surface == NULL){
         fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
         SDL_Quit();
@@ -129,7 +130,7 @@ int main(){
         }
         for (int i=0; i<N; ++i){
             // Modification de la direction de chaque poisson
-            double nouvelle_dir = dir_temp[i] + gaussienne(0,5);
+            double nouvelle_dir = dir_temp[i] + gaussienne(0,sigma2);
             if (nouvelle_dir - banc[i].dir < theta*tau){
                 banc[i].dir = nouvelle_dir;
             }
@@ -150,7 +151,7 @@ int main(){
         render(renderer, &texture, banc, N);
         
         //Delay to control the frame rate
-        SDL_Delay(tau); // en ms
+        //SDL_Delay(tau); // en ms
     }
     // Fin de la boucle temporelle
     free(dir_temp);

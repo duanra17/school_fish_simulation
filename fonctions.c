@@ -231,15 +231,12 @@ void mur(struct poisson* P, double s,double tau, double x_max, double y_max){
 // --------------------------------------------------------------------------
 // Fonctions d'affichage graphique
 
-#define IMAGE_WIDTH 1200
-#define IMAGE_HEIGHT 800
 
 // Fenêtre
 void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
-    //SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_Rect * rects = malloc(sizeof(SDL_Rect)*N);
     // SDL_Rect {int x, int y, int w, int h}
 
@@ -249,97 +246,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
         rects[i].w = 30;
         rects[i].h = 30;
     
-        //SDL_RenderFillRect(renderer, &rects[i]); // Crée un carré indésirable
-        //SDL_RenderCopy(renderer, *texture, NULL, &rects[i]); // redondant
-        SDL_RenderCopyEx (renderer,*texture, NULL, &rects[i], banc[i].dir, NULL, SDL_FLIP_HORIZONTAL);
+        SDL_RenderCopyEx (renderer,*texture, NULL, &rects[i], banc[i].dir, NULL, SDL_FLIP_NONE);
     }
     SDL_RenderPresent(renderer);
-}
-
-// Fonction inutilisée, code intégré dans affichage, car il y avait un problème de pointeurs et d'étoiles avec SDL_Texture*
-void  loadTexture(SDL_Renderer *renderer, SDL_Texture *texture){
-    SDL_Surface * surface = IMG_Load("poisson.png");
-    if (surface == NULL){
-        fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
-        SDL_Quit();
-        exit(1);
-    }
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    // *texture = SDL_CreateTextureFromSurface(renderer, surface);    
-    SDL_FreeSurface(surface);
-    if (texture == NULL){
-    // if (*texture == NULL){
-        fprintf(stderr, "Failed to create texture: %s \n ", SDL_GetError());
-        SDL_Quit();
-        exit(1);
-    }
-}
-
-// Fonction à supprimer éventuellement
-int affichage(struct poisson* banc, int N){
-    if (SDL_Init(SDL_INIT_VIDEO) < 0){
-        fprintf(stderr, "SDL initialization, failed: %s\n", SDL_GetError());
-        return 1;
-    }
-
-    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, IMAGE_WIDTH, IMAGE_HEIGHT, SDL_WINDOW_SHOWN);
-    if(window == NULL){
-        fprintf(stderr, "Window creation failed : %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if(renderer == NULL){
-        fprintf(stderr, "Renderer creation failed: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
-
-    //SDL_Texture *texture;
-    //loadTexture(renderer, texture);
-    SDL_Surface * surface = IMG_Load("poisson.png");
-    if (surface == NULL){
-        fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
-        SDL_Quit();
-        exit(1);
-    }
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    // *texture = SDL_CreateTextureFromSurface(renderer, surface);    
-    SDL_FreeSurface(surface);
-    if (texture == NULL){
-    // if (*texture == NULL){
-        fprintf(stderr, "Failed to create texture: %s \n ", SDL_GetError());
-        SDL_Quit();
-        exit(1);
-    }
-    /*
-    SDL_Event event;
-    int quit = 0;
-    while (!quit){
-        while (SDL_PollEvent(&event) != 0){
-            if (event.type == SDL_QUIT) {
-                quit = 1;
-            }
-        }
-
-        // Render the updated positions
-        render(renderer, &texture, banc, N);
-
-        //Delay to control the frame rate
-        SDL_Delay(0.1);
-    }
-    */
-    // Render the updated positions
-    render(renderer, &texture, banc, N);
-        
-    //Delay to control the frame rate
-    SDL_Delay(10); // en ms
-
-    //SDL_DestroyRenderer(renderer);
-    //SDL_DestroyWindow(window);
-    //SDL_Quit();
-
-    return 0;
 }
