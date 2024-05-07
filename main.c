@@ -11,10 +11,10 @@
 int main(){
 
     int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.05; // Norme de la vitesse des poissons (longueur/ms)
+    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
     double alpha = 360; // Champ de perception (angle)
-    double theta = 30; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 50; // En ms
+    double theta = 9; // Vitesse de rotation du poisson (°/ms)
+    unsigned int tau = 10; // En ms
     double sigma2 = 2; // Variance de la gaussienne
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 1000;

@@ -124,7 +124,7 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
                 tmp = tmp + indices_zo[j]*(banc[j].dir);
                 compt++;
             }
-            tmp = modulo360(tmp/compt + 180); // Signe -
+            tmp = modulo360(tmp/compt);
             
             return(tmp);
 
