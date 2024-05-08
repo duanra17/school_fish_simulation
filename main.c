@@ -11,9 +11,9 @@
 int main(){
 
     int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
-    double alpha = 360; // Champ de perception (angle)
-    double theta = 9; // Vitesse de rotation du poisson (°/ms)
+    double s = 0.25; // Norme de la vitesse des poissons (longueur/ms)
+    double alpha = 300; // Champ de perception (angle)
+    double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
     unsigned int tau = 10; // En ms
     double sigma2 = 2; // Variance de la gaussienne
     double x_max = 1000; // Bornes de la zone disponible
@@ -126,20 +126,25 @@ int main(){
                     }
                 }
             }
-            traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
+            int zone = mur(banc[i],s, tau, x_max, y_max);
+            traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i,zone); // On modifie la direction temporaire du i-ème poisson.
         }
         for (int i=0; i<N; ++i){
             // Modification de la direction de chaque poisson
             double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,sigma2));
-            if (nouvelle_dir - banc[i].dir < theta*tau){
+            if (fabs(nouvelle_dir - banc[i].dir) < theta*tau){
                 banc[i].dir = nouvelle_dir;
             }
             else{
-                banc[i].dir = theta*tau;
+                if(nouvelle_dir<=180){
+                    banc[i].dir = modulo360(banc[i].dir + theta*tau);
+                }else{
+                    banc[i].dir = modulo360(banc[i].dir - theta*tau);
+                }
             }
 
             // On vérifie que le poisson ne fonce pas dans le mur
-            mur(&banc[i], s, tau, x_max, y_max);
+            mur(banc[i], s, tau, x_max, y_max);
 
 
             // Modification de la position des poissons
@@ -151,7 +156,7 @@ int main(){
         render(renderer, &texture, banc, N);
         
         //Delay to control the frame rate
-        //SDL_Delay(tau); // en ms
+        SDL_Delay(tau); // en ms
     }
     // Fin de la boucle temporelle
     free(dir_temp);

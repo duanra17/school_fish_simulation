@@ -77,20 +77,50 @@ int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
     }
 }
 
+double arg_dist_poissons(struct poisson P1, struct poisson P2){
+    // Renvoie l'argument du vecteur qui relie le poisson P1 au poisson P2.
+
+    double theta = (360/(2*M_PI))*acos( (P2.x-P1.x) / sqrt((P2.x-P1.x)*(P2.x-P1.x) + (P2.y-P1.y)*(P2.y-P1.y)));
+
+    if(P2.y>=P1.y){
+        return theta;
+    }else{
+        return modulo360(-theta);
+    }
+}
+
 // --------------------------------------------------------------------------
 // Fonctions nécessaires au traitement
 
-double repulsion(int* indices_zr, int N, struct poisson* banc){
+
+
+double repulsion(int* indices_zr, int N, struct poisson* banc, int zone){
     // indices_zr: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZR du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de la répulsion
     double tmp = 0;
     int compt = 0;
             for(int j=0; j<N; j++){
-                tmp = tmp + indices_zr[j]*(banc[j].dir); // +180 ~ *-1
+                tmp = tmp + indices_zr[j]*(arg_dist_poissons(banc[N], banc[j])); 
                 compt++;
             }
 
-            tmp = modulo360(tmp/compt + 180); 
+            if(zone == 1){
+                tmp = tmp + 10*90;
+                compt = compt + 10;
+            }
+            if(zone == 2){
+                tmp = tmp + 10*270;
+                compt = compt + 10;
+            }
+            if(zone == 3){
+                tmp = tmp + 10*180;
+                compt = compt + 10;
+            }
+            if(zone == 4){
+                compt = compt + 10;
+            }
+
+            tmp = modulo360(tmp/compt + 180); // +180 ~ *-1
 
             return(tmp);
 }
@@ -101,7 +131,7 @@ double attraction(int* indices_za, int N, struct poisson* banc){
     int compt = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
-                tmp = tmp + indices_za[j]*(banc[j].dir);
+                tmp = tmp + indices_za[j]*(arg_dist_poissons(banc[N], banc[j]));
                 compt++;
             }
             tmp = modulo360(tmp/compt);
@@ -129,7 +159,7 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
 }
 // --------------------------------------------------------------------------
 
-int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP){
+int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP, int zone){
     // Ne renvoie rien (d'intéressant).
 
     /* indices_za, indices_zr et indices_zo indiquent la position des poissons par rapport aux zones
@@ -147,8 +177,8 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
     int test_o = 0;
 
     for(int i=0; i<N; i++){
-        if(indices_zr[i]){// Si au moins un poisson est dans la zone de répulsion, on ne fait pas les autres boucles.
-            dir_temp[indP] = repulsion(indices_zr, N, banc);
+        if(indices_zr[i] || zone!=0){// Si au moins un poisson est dans la zone de répulsion, on ne fait pas les autres boucles.
+            dir_temp[indP] = repulsion(indices_zr, N, banc, zone);
             return(0);
         }
         if(indices_za[i]){ // Si au moins un poisson est dans la zone d'attraction
@@ -195,34 +225,50 @@ double gaussienne(double mu, double sigma){
     return N;
 }
 
-void mur(struct poisson* P, double s,double tau, double x_max, double y_max){
+// void mur(struct poisson* P, double s,double tau, double x_max, double y_max){
+//     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
+//     double d_bord = s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
+
+//     if(P->y<d_bord){
+//         if(P->dir<180){
+//             P->dir = modulo360(-(P->dir));
+//         }
+//     }
+//     if(P->y>y_max-d_bord){
+//         if(P->dir>180){
+//             P->dir = modulo360(-(P->dir));
+//         }
+//     }
+
+//     if(P->x<d_bord){
+//         if(P->dir>90 && P->dir<270){
+//             P->dir = modulo360(180-(P->dir));
+//         }
+//     }
+//     if(P->x>x_max-d_bord){
+//         if(P->dir<90 || P->dir>270){
+//             P->dir = modulo360(180-(P.dir));
+//         }
+//     }
+// }
+
+int mur(struct poisson P, double s,double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
-    double d_bord = s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
+    double d_bord = 20*s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
 
-    if(P->y<d_bord){
-        if(P->dir<180){
-            P->dir = modulo360(-(P->dir));
-        }
+    if(P.y<d_bord){
+        return 1;
+    }else if(P.y>y_max-d_bord){
+        return 2;
+    }else if(P.x<d_bord){
+        return 3;
+    }else if(P.x>x_max-d_bord){
+        return 4;
+    }else{
+        return 0;
     }
-    if(P->y>y_max-d_bord){
-        if(P->dir>180){
-            P->dir = modulo360(-(P->dir));
-        }
-    }
-
-    if(P->x<d_bord){
-        if(P->dir>90 && P->dir<270){
-            P->dir = modulo360(180-(P->dir));
-        }
-    }
-    if(P->x>x_max-d_bord){
-        if(P->dir<90 || P->dir>270){
-            P->dir = modulo360(180-(P->dir));
-        }
-    }
+    return 0;
 }
-
-
 
 
 // --------------------------------------------------------------------------
