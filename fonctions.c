@@ -12,6 +12,7 @@
     #define  M_PI  3.1415926535897932384626433
 #endif
 
+
 //Initialisation
 void initialisation(struct poisson *P, double x_max, double y_max){
     /*Initialise la position et l'orientation du poisson aléatoirement*/
@@ -295,20 +296,53 @@ int zones(struct poisson P, double s,double tau, double x_max, double y_max){
 
 
 // Fenêtre
-void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N){
+void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-
+    
+    // Poissons
     SDL_Rect * rects = malloc(sizeof(SDL_Rect)*N);
-    // SDL_Rect {int x, int y, int w, int h}
-
     for (int i=0; i<N; ++i){
         rects[i].x = banc[i].x; 
         rects[i].y = banc[i].y;
         rects[i].w = 30;
         rects[i].h = 30;
-    
         SDL_RenderCopyEx (renderer,*texture, NULL, &rects[i], banc[i].dir, NULL, SDL_FLIP_NONE);
+    }  
+
+    // Barres
+    SDL_SetRenderDrawColor(renderer, 180, 180, 180, 255);
+    for (int i=0; i<6; ++i){
+        SDL_RenderFillRect(renderer,&barres[i]);     
     }
+
+    // Glisseurs
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    for (int i=0; i<6; ++i){
+        SDL_RenderFillRect(renderer,&glisseurs[i]);
+    }
+
+    // Affichage
     SDL_RenderPresent(renderer);
 }
+
+void init_barres(SDL_Rect *barres, double x_max, double y_max){
+    // Definition de la position des barres
+    for (int i = 0; i<6; ++i){
+        barres[i].h = 20;
+        barres[i].x = x_max + 100; 
+        barres[i].y = (i+1)*y_max/7 - barres[i].h/2;
+        barres[i].w = 200;
+    }
+}
+
+void init_glisseurs(SDL_Rect *glisseurs, double x_max, double y_max){
+    // Definition de la position des barres
+    for (int i = 0; i<6; ++i){
+        glisseurs[i].h = 20;
+        glisseurs[i].x = x_max + 100; // Variable
+        glisseurs[i].y = (i+1)*y_max/7 - glisseurs[i].h/2;
+        glisseurs[i].w = 30;
+    }
+}
+
