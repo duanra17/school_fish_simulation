@@ -15,7 +15,7 @@ int main(){
     double alpha = 300; // Champ de perception (angle)
     double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
     unsigned int tau = 10; // En ms
-    double sigma2 = 2; // Variance de la gaussienne
+    double sigma2 = 2; // Variance de la gaussienne, correspond au tortillage (wiggle)
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 1000;
 
@@ -24,10 +24,26 @@ int main(){
     double ra = x_max*6/100; // Rayon de la zone d'attraction
     // On a : rr <= ro <= ra
 
+    // Maximums et minimums des 6 paramètres variables
+    /*
+    double s_max;
+    double s_min;
+    double rr_max;
+    double rr_min;
+    double ro_max;
+    double ro_min;
+    double ra_max;
+    double ra_min;
+    double sigma2_max;
+    double sigma2_min;
+    double alpha_max;
+    double alpha_min;
+    */
 
+    // Initialisation de l'aléatoire
     srand(time(NULL));
 
-    //Création du banc de poissons
+    // Création du banc de poissons
     struct poisson* banc = malloc(sizeof(struct poisson)*N);
 
     for(int i = 0; i<N; i++){
@@ -58,6 +74,7 @@ int main(){
         return 1;
     }
 
+    // Banc de poissons
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(renderer == NULL){
         fprintf(stderr, "Renderer creation failed: %s\n", SDL_GetError());
@@ -80,6 +97,24 @@ int main(){
         exit(1);
     }
 
+    // Barres pour faire varier les paramètres
+    SDL_Rect * barres = malloc(sizeof(SDL_Rect)*6);
+    SDL_Rect * glisseurs = malloc(sizeof(SDL_Rect)*6);
+
+    if (barres == NULL){
+        printf("Erreur allocation mémoire \n ");
+        SDL_Quit();
+        exit(1);
+    }
+    if (glisseurs == NULL){
+        printf("Erreur allocation mémoire \n ");
+        SDL_Quit();
+        exit(1);
+    }
+    init_barres(barres, x_max, y_max);
+    init_glisseurs(glisseurs, x_max, y_max);
+    
+
     // Boucle temporelle
     SDL_Event event;
     int quit = 0;
@@ -90,6 +125,10 @@ int main(){
                 quit = 1;
             }
         }
+
+        // Modification des paramètres variables
+
+
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){
             dir_temp[i] = banc[i].dir;
@@ -152,12 +191,14 @@ int main(){
             banc[i].y = banc[i].y + s*tau*sin(2*M_PI * banc[i].dir / 360);
             
         }
+
         // Render the updated positions
-        render(renderer, &texture, banc, N);
+        render(renderer, &texture, banc, N, barres, glisseurs);
         
         //Delay to control the frame rate
         SDL_Delay(tau); // en ms
     }
+    
     // Fin de la boucle temporelle
     free(dir_temp);
     free(banc);
