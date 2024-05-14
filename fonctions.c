@@ -268,7 +268,7 @@ void mur(struct poisson* P, double s, double tau, double x_max, double y_max){
 
 int zones(struct poisson P, double s,double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
-    double d_bord = 50*s*tau; //Distance pour laquelle le poisson détecte le mur
+    double d_bord = 20*s*tau; //Distance pour laquelle le poisson détecte le mur
     int zone = 0;
     if(P.y<d_bord){
         zone =  1;
@@ -287,6 +287,9 @@ int zones(struct poisson P, double s,double tau, double x_max, double y_max){
     }else if(P.x<d_bord && P.y<d_bord){
         zone =  8;
     }
+
+    zone = 0; //Pour retirer cette fonctionalité
+
     return zone;
 }
 
@@ -296,7 +299,7 @@ int zones(struct poisson P, double s,double tau, double x_max, double y_max){
 
 
 // Fenêtre
-void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs){
+void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs, SDL_Rect aquarium){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     
@@ -321,6 +324,10 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
     for (int i=0; i<6; ++i){
         SDL_RenderFillRect(renderer,&glisseurs[i]);
     }
+
+    // Aquarium
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderDrawRect(renderer, &aquarium);
 
     // Affichage
     SDL_RenderPresent(renderer);

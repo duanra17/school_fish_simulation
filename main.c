@@ -10,18 +10,18 @@
 
 int main(){
 
-    int N = 10; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.25; // Norme de la vitesse des poissons (longueur/ms)
+    int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
+    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
     double alpha = 300; // Champ de perception (angle)
     double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 10; // En ms
-    double sigma2 = 2; // Variance de la gaussienne, correspond au tortillage (wiggle)
-    double x_max = 1000; // Bornes de la zone disponible
-    double y_max = 1000;
+    unsigned int tau = 20; // En ms
+    double sigma2 = 1; // Variance de la gaussienne, correspond au tortillage (wiggle)
+    double x_max = 900; // Bornes de la zone disponible
+    double y_max = 900;
 
-    double rr = x_max*2/100; // Rayon de la zone de répulsion
-    double ro = x_max*3/100; // Rayon de la zone d'orientation
-    double ra = x_max*6/100; // Rayon de la zone d'attraction
+    double rr = 5; // Rayon de la zone de répulsion
+    double ro = 30; // Rayon de la zone d'orientation
+    double ra = 80; // Rayon de la zone d'attraction
     // On a : rr <= ro <= ra
 
     // Maximums et minimums des 6 paramètres variables
@@ -100,6 +100,9 @@ int main(){
     // Barres pour faire varier les paramètres
     SDL_Rect * barres = malloc(sizeof(SDL_Rect)*6);
     SDL_Rect * glisseurs = malloc(sizeof(SDL_Rect)*6);
+
+    // Pour encadrer les poissons
+    SDL_Rect aquarium = {0, 0, x_max+30, y_max+30};
 
     if (barres == NULL){
         printf("Erreur allocation mémoire \n ");
@@ -196,7 +199,7 @@ int main(){
         }
 
         // Render the updated positions
-        render(renderer, &texture, banc, N, barres, glisseurs);
+        render(renderer, &texture, banc, N, barres, glisseurs, aquarium);
         
         //Delay to control the frame rate
         SDL_Delay(tau); // en ms
