@@ -28,7 +28,9 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
 
 double gaussienne(double mu, double sigma);
 
-int mur(struct poisson P, double s,double tau, double x_max, double y_max);
+void mur(struct poisson* P, double s, double tau, double x_max, double y_max);
+
+int zones(struct poisson P, double s,double tau, double x_max, double y_max);
 
 void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N);
 

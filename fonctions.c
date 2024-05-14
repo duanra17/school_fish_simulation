@@ -6,17 +6,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
+#include "fonctions.h"
 
 #ifndef  M_PI
     #define  M_PI  3.1415926535897932384626433
 #endif
-
-/*Poissons indicés de 0 à N-1*/
-struct poisson{
-    double x; //Position abscisses
-    double y; //Position ordonnées
-    double dir; //Direction de la vitesse (angle entre 0 et 360°)
-};
 
 //Initialisation
 void initialisation(struct poisson *P, double x_max, double y_max){
@@ -34,8 +28,8 @@ double distance(struct poisson A, struct poisson B){
 
 // Fonction qui ramène les angles entre 0° et 360°
 double modulo360(double A){
-    if (A>360){
-        while(A>360){ 
+    if (A>=360){
+        while(A>=360){ 
             A = A-360;
         }
     } else if (A<0){
@@ -82,7 +76,7 @@ double arg_dist_poissons(struct poisson P1, struct poisson P2){
 
     double theta = (360/(2*M_PI))*acos( (P2.x-P1.x) / sqrt((P2.x-P1.x)*(P2.x-P1.x) + (P2.y-P1.y)*(P2.y-P1.y)));
 
-    if(P2.y>=P1.y){
+    if(P2.y<=P1.y){
         return theta;
     }else{
         return modulo360(-theta);
@@ -105,11 +99,11 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone){
             }
 
             if(zone == 1){
-                tmp = tmp + 10*90;
+                tmp = tmp + 10*270;
                 compt = compt + 10;
             }
             if(zone == 2){
-                tmp = tmp + 10*270;
+                tmp = tmp + 10*90;
                 compt = compt + 10;
             }
             if(zone == 3){
@@ -119,8 +113,30 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone){
             if(zone == 4){
                 compt = compt + 10;
             }
+            if(zone == 5){
+                tmp = tmp + 10*270;
+                compt = compt + 10;
+                compt = compt + 10;
+            }
+            if(zone == 6){
+                tmp = tmp + 10*90;
+                compt = compt + 10;
+                compt = compt + 10;
+            }
+            if(zone == 7){
+                tmp = tmp + 10*180;
+                compt = compt + 10;
+                tmp = tmp + 10*90;
+                compt = compt + 10;
+            }
+            if(zone == 8){
+                tmp = tmp + 10*270;
+                compt = compt + 10;
+                tmp = tmp + 10*180;
+                compt = compt + 10;
+            }
 
-            tmp = modulo360(tmp/compt + 180); // +180 ~ *-1
+            tmp = modulo360(tmp/compt + 180); // +180 ~ *-1 en vecteur
 
             return(tmp);
 }
@@ -219,55 +235,58 @@ double gaussienne(double mu, double sigma){
 
     N = mu + sigma*X; // N suit une loi normale de moyenne mu et de variance sigma².
 
-    // Pour que la direction soit comprise entre 0 et 360.
-    N = modulo360(N);
-
     return N;
 }
 
-// void mur(struct poisson* P, double s,double tau, double x_max, double y_max){
-//     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
-//     double d_bord = s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
-
-//     if(P->y<d_bord){
-//         if(P->dir<180){
-//             P->dir = modulo360(-(P->dir));
-//         }
-//     }
-//     if(P->y>y_max-d_bord){
-//         if(P->dir>180){
-//             P->dir = modulo360(-(P->dir));
-//         }
-//     }
-
-//     if(P->x<d_bord){
-//         if(P->dir>90 && P->dir<270){
-//             P->dir = modulo360(180-(P->dir));
-//         }
-//     }
-//     if(P->x>x_max-d_bord){
-//         if(P->dir<90 || P->dir>270){
-//             P->dir = modulo360(180-(P.dir));
-//         }
-//     }
-// }
-
-int mur(struct poisson P, double s,double tau, double x_max, double y_max){
+void mur(struct poisson* P, double s, double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
-    double d_bord = 20*s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
+    double d_bord = s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
 
-    if(P.y<d_bord){
-        return 1;
-    }else if(P.y>y_max-d_bord){
-        return 2;
-    }else if(P.x<d_bord){
-        return 3;
-    }else if(P.x>x_max-d_bord){
-        return 4;
-    }else{
-        return 0;
+    if(P->y<d_bord){
+        if(P->dir>180){ // Les angles sont comptés dans le sens horaire
+            P->dir = modulo360(-(P->dir));
+        }
     }
-    return 0;
+    if(P->y>y_max-d_bord){ 
+        if(P->dir<180){ // Les angles sont comptés dans le sens horaire
+            P->dir = modulo360(-(P->dir));
+        }
+    }
+
+    if(P->x<d_bord){
+        if(P->dir>90 && P->dir<270){
+            P->dir = modulo360(180-(P->dir));
+        }
+    }
+    if(P->x>x_max-d_bord){
+        if(P->dir<90 || P->dir>270){
+            P->dir = modulo360(180-(P->dir));
+        }
+    }
+}
+
+int zones(struct poisson P, double s,double tau, double x_max, double y_max){
+    // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
+    double d_bord = 50*s*tau; //Distance pour laquelle le poisson détecte le mur
+    int zone = 0;
+    if(P.y<d_bord){
+        zone =  1;
+    }if(P.y>y_max-d_bord){
+        zone =  2;
+    }else if(P.x<d_bord){
+        zone =  3;
+    }else if(P.x>x_max-d_bord){
+        zone =  4;
+    }else if(P.y<d_bord && P.x>x_max-d_bord){
+        zone =  5;
+    }else if(P.y>y_max-d_bord && P.x>x_max-d_bord){
+        zone =  6;
+    }else if(P.x<d_bord && P.y>y_max-d_bord){
+        zone =  7;
+    }else if(P.x<d_bord && P.y<d_bord){
+        zone =  8;
+    }
+    return zone;
 }
 
 
