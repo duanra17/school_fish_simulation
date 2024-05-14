@@ -10,9 +10,9 @@
 
 int main(){
 
-    int N = 10; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.25; // Norme de la vitesse des poissons (longueur/ms)
-    double alpha = 300; // Champ de perception (angle)
+    int N = 50; // Nombre de poissons (Indicés de 0 à N-1)
+    double s = 0.4; // Norme de la vitesse des poissons (longueur/ms)
+    double alpha = 260; // Champ de perception (angle)
     double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
     unsigned int tau = 10; // En ms
     double sigma2 = 2; // Variance de la gaussienne, correspond au tortillage (wiggle)
@@ -20,8 +20,8 @@ int main(){
     double y_max = 1000;
 
     double rr = x_max*2/100; // Rayon de la zone de répulsion
-    double ro = x_max*3/100; // Rayon de la zone d'orientation
-    double ra = x_max*6/100; // Rayon de la zone d'attraction
+    double ro = x_max*6/100; // Rayon de la zone d'orientation
+    double ra = x_max*8/100; // Rayon de la zone d'attraction
     // On a : rr <= ro <= ra
 
     // Maximums et minimums des 6 paramètres variables
