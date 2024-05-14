@@ -25,9 +25,10 @@ int main(){
     // On a : rr <= ro <= ra
 
     // Maximums et minimums des 6 paramètres variables
+    
+    double s_max = 10;
+    double s_min = 0.1;
     /*
-    double s_max;
-    double s_min;
     double rr_max;
     double rr_min;
     double ro_max;
@@ -120,15 +121,27 @@ int main(){
     int quit = 0;
 
     while (!quit){
-        // Fermeture de la fenêtre
         while (SDL_PollEvent(&event) != 0){
+            // Fermeture de la fenêtre
             if (event.type == SDL_QUIT) {
                 quit = 1;
             }
+        
+            // Modification des paramètres variables
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT){
+                for (int i=0; i<6; ++i){
+                    float xs = event.button.x;// Coordonnées de la souris
+                    float ys = event.button.y;// Coordonnées de la souris
+                    // Si la souris se trouve dans la barre
+                    if (barres[i].y<ys && barres[i].y+barres[i].h>ys && barres[i].x<xs && barres[i].x+barres[i].w>xs){
+                        // TO DO : remplacer s par un paramètre quelconque
+                        float pente = (s_max-s_min)/(barres[i].w); // Pente de la relation linéaire entre abscisse et paramètre
+                        s = pente*(xs-barres[i].x) + s_min;
+                        glisseurs[i].x = xs - glisseurs[i].w/2;
+                    }
+                }
+            }
         }
-
-        // Modification des paramètres variables
-
 
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){

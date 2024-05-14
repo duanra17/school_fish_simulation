@@ -321,7 +321,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
     for (int i=0; i<6; ++i){
         SDL_RenderFillRect(renderer,&glisseurs[i]);
     }
-
+    
     // Affichage
     SDL_RenderPresent(renderer);
 }
