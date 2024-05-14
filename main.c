@@ -10,17 +10,17 @@
 
 int main(){
 
-    int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
-    double alpha = 360; // Champ de perception (angle)
-    double theta = 9; // Vitesse de rotation du poisson (°/ms)
+    int N = 10; // Nombre de poissons (Indicés de 0 à N-1)
+    double s = 0.25; // Norme de la vitesse des poissons (longueur/ms)
+    double alpha = 300; // Champ de perception (angle)
+    double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
     unsigned int tau = 10; // En ms
     double sigma2 = 2; // Variance de la gaussienne
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 1000;
 
     double rr = x_max*2/100; // Rayon de la zone de répulsion
-    double ro = x_max*4/100; // Rayon de la zone d'orientation
+    double ro = x_max*3/100; // Rayon de la zone d'orientation
     double ra = x_max*6/100; // Rayon de la zone d'attraction
     // On a : rr <= ro <= ra
 
@@ -83,6 +83,7 @@ int main(){
     // Boucle temporelle
     SDL_Event event;
     int quit = 0;
+
     while (!quit){
         // Fermeture de la fenêtre
         while (SDL_PollEvent(&event) != 0){
@@ -126,16 +127,23 @@ int main(){
                     }
                 }
             }
-            traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i); // On modifie la direction temporaire du i-ème poisson.
+            int zone = 0;
+            zone = zones(banc[i], s, tau, x_max, y_max);
+
+            traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i,zone); // On modifie la direction temporaire du i-ème poisson.
         }
         for (int i=0; i<N; ++i){
             // Modification de la direction de chaque poisson
-            double nouvelle_dir = dir_temp[i] + gaussienne(0,sigma2);
-            if (nouvelle_dir - banc[i].dir < theta*tau){
+            double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,sigma2));
+            if (fabs(nouvelle_dir - banc[i].dir) < theta*tau || fabs(nouvelle_dir - banc[i].dir) > 360 - theta*tau){
                 banc[i].dir = nouvelle_dir;
             }
             else{
-                banc[i].dir = theta*tau;
+                if(fabs(nouvelle_dir - banc[i].dir)<=180){
+                    banc[i].dir = modulo360(banc[i].dir + theta*tau);
+                }else{
+                    banc[i].dir = modulo360(banc[i].dir - theta*tau);
+                }
             }
 
             // On vérifie que le poisson ne fonce pas dans le mur
@@ -151,7 +159,7 @@ int main(){
         render(renderer, &texture, banc, N);
         
         //Delay to control the frame rate
-        //SDL_Delay(tau); // en ms
+        SDL_Delay(tau); // en ms
     }
     // Fin de la boucle temporelle
     free(dir_temp);
