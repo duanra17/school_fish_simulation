@@ -32,8 +32,8 @@ void mur(struct poisson* P, double s, double tau, double x_max, double y_max);
 
 int zones(struct poisson P, double s,double tau, double x_max, double y_max);
 
-void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N);
+void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect * barres, SDL_Rect *glisseurs);
 
-void  loadTexture(SDL_Renderer *renderer, SDL_Texture *texture);
+void init_barres(SDL_Rect *barres, double x_max, double y_max);
 
-int affichage(struct poisson* banc, int N);
+void init_glisseurs(SDL_Rect *glisseurs, double x_max, double y_max);
