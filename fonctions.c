@@ -343,13 +343,13 @@ void init_barres(SDL_Rect *barres, double x_max, double y_max){
     }
 }
 
-void init_glisseurs(SDL_Rect *glisseurs, double x_max, double y_max){
+void init_glisseurs(SDL_Rect *glisseurs, SDL_Rect *barres){
     // Definition de la position des barres
     for (int i = 0; i<6; ++i){
-        glisseurs[i].h = 20;
-        glisseurs[i].x = x_max + 100; // Variable
-        glisseurs[i].y = (i+1)*y_max/7 - glisseurs[i].h/2;
+        glisseurs[i].h = barres[i].h;
         glisseurs[i].w = 30;
+        glisseurs[i].x = barres[i].x + barres[i].w - glisseurs[i].w/2; // Variable
+        glisseurs[i].y = barres[i].y;
     }
 }
 

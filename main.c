@@ -10,35 +10,31 @@
 
 int main(){
 
-    int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
-    double s = 0.1; // Norme de la vitesse des poissons (longueur/ms)
-    double alpha = 300; // Champ de perception (angle)
+    int N = 50; // Nombre de poissons (Indicés de 0 à N-1)
     double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 20; // En ms
-    double sigma2 = 1; // Variance de la gaussienne, correspond au tortillage (wiggle)
-    double x_max = 900; // Bornes de la zone disponible
-    double y_max = 900;
+    unsigned int tau = 10; // En ms
+    double x_max = 1000; // Bornes de la zone disponible
+    double y_max = 800;
 
-    double rr = 5; // Rayon de la zone de répulsion
-    double ro = 30; // Rayon de la zone d'orientation
-    double ra = 80; // Rayon de la zone d'attraction
-    // On a : rr <= ro <= ra
-
-    // Maximums et minimums des 6 paramètres variables
+    // Paramètres variables
     /*
-    double s_max;
-    double s_min;
-    double rr_max;
-    double rr_min;
-    double ro_max;
-    double ro_min;
-    double ra_max;
-    double ra_min;
-    double sigma2_max;
-    double sigma2_min;
-    double alpha_max;
-    double alpha_min;
+    para[0]: s // Norme de la vitesse des poissons (longueur/ms)
+    para[1]: rr // Rayon de la zone de répulsion
+    para[2]: ro // Rayon de la zone d'orientation
+    para[3]: ra // Rayon de la zone d'attraction
+        Il faudrait : rr <= ro <= ra
+    para[4]: sigma2 // Variance de la gaussienne, correspond au tortillage (wiggle)
+    para[5]: alpha // Champ de perception (angle)
     */
+
+    double  para[6]; // Liste des paramètres variables
+    //      para[6]    = {s, rr, ro, ra, sigma2, alpha}
+    double para_max[6] = {2, 100, 100, 100, 40, 359}; // Maximums des paramètres
+    double para_min[6] = {0.1, 5, 5, 5, 0.1, 1};  // Minimums des paramètres
+
+    for (int i=0; i<6; ++i){
+        para[i] = para_max[i];
+    }
 
     // Initialisation de l'aléatoire
     srand(time(NULL));
@@ -51,7 +47,6 @@ int main(){
     }
 
     double* dir_temp = malloc(sizeof(double)*N);// Liste des directions des poissons à l'instant suivant
-    
     if (dir_temp == NULL) { //Test du malloc
     printf("Erreur d'allocation de mémoire\n");
     return 1;
@@ -67,7 +62,7 @@ int main(){
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x_max, y_max, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("N-Body Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x_max+320, y_max, SDL_WINDOW_SHOWN);
     if(window == NULL){
         fprintf(stderr, "Window creation failed : %s\n", SDL_GetError());
         SDL_Quit();
@@ -115,23 +110,35 @@ int main(){
         exit(1);
     }
     init_barres(barres, x_max, y_max);
-    init_glisseurs(glisseurs, x_max, y_max);
+    init_glisseurs(glisseurs, barres);
     
-
     // Boucle temporelle
     SDL_Event event;
     int quit = 0;
 
     while (!quit){
-        // Fermeture de la fenêtre
         while (SDL_PollEvent(&event) != 0){
+            // Fermeture de la fenêtre
             if (event.type == SDL_QUIT) {
                 quit = 1;
             }
+        
+            // Modification des paramètres variables
+            if (event.button.button == SDL_BUTTON_LEFT){
+                for (int i=0; i<6; ++i){
+                    float xs = event.button.x;// Coordonnées de la souris
+                    float ys = event.button.y;// Coordonnées de la souris
+                    // Si la souris se trouve dans la barre
+                    if (barres[i].y<ys && barres[i].y+barres[i].h>ys && barres[i].x<xs && barres[i].x+barres[i].w>xs){
+                        // TO DO : remplacer s par un paramètre quelconque
+                        float pente = (para_max[i]-para_min[i])/(barres[i].w); // Pente de la relation linéaire entre abscisse et paramètre
+                        para[i] = pente*(xs-barres[i].x) + para_min[i];
+                        glisseurs[i].x = xs - glisseurs[i].w/2;
+                    }
+                }
+            }
+            
         }
-
-        // Modification des paramètres variables
-
 
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
         for (int i=0; i<N; ++i){
@@ -151,17 +158,17 @@ int main(){
                 if (j==i){
                     ++j;
                 }else{
-                    if (!dans_angle_mort(banc[i],banc[j],alpha)){
+                    if (!dans_angle_mort(banc[i],banc[j],para[5])){
                         // Le poisson j est visible par le poisson i
-                        if (distance(banc[i],banc[j])<rr){
+                        if (distance(banc[i],banc[j])<para[1]){
                             // Le poisson j est dans la ZR du poisson i
                             indices_zr[j] = 1;
                         }
-                        else if (distance(banc[i],banc[j])<ro){
+                        else if (distance(banc[i],banc[j])<para[2]){
                             // Le poisson j est dans la ZO du poisson i
                             indices_zo[j] = 1;
                         }
-                        else if (distance(banc[i],banc[j])<ra){
+                        else if (distance(banc[i],banc[j])<para[3]){
                             // Le poisson j est dans la ZA du poisson i
                             indices_za[j] = 1;
                         //Autre cas : le poisson j n'est dans aucune zone voisine du poisson i
@@ -170,13 +177,13 @@ int main(){
                 }
             }
             int zone = 0;
-            zone = zones(banc[i], s, tau, x_max, y_max);
+            zone = zones(banc[i], para[0], tau, x_max, y_max);
 
             traitement(indices_za,indices_zr,indices_zo,dir_temp,N,banc,i,zone); // On modifie la direction temporaire du i-ème poisson.
         }
+        // Modification de la direction de chaque poisson
         for (int i=0; i<N; ++i){
-            // Modification de la direction de chaque poisson
-            double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,sigma2));
+            double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,para[4]));
             if (fabs(nouvelle_dir - banc[i].dir) < theta*tau || fabs(nouvelle_dir - banc[i].dir) > 360 - theta*tau){
                 banc[i].dir = nouvelle_dir;
             }
@@ -189,12 +196,12 @@ int main(){
             }
 
             // On vérifie que le poisson ne fonce pas dans le mur
-            mur(&banc[i], s, tau, x_max, y_max);
+            mur(&banc[i], para[0], tau, x_max, y_max);
 
 
             // Modification de la position des poissons
-            banc[i].x = banc[i].x + s*tau*cos(2*M_PI * banc[i].dir / 360);
-            banc[i].y = banc[i].y + s*tau*sin(2*M_PI * banc[i].dir / 360);
+            banc[i].x = banc[i].x + para[0]*tau*cos(2*M_PI * banc[i].dir / 360);
+            banc[i].y = banc[i].y + para[0]*tau*sin(2*M_PI * banc[i].dir / 360);
             
         }
 
