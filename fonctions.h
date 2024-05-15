@@ -36,4 +36,4 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
 
 void init_barres(SDL_Rect *barres, double x_max, double y_max);
 
-void init_glisseurs(SDL_Rect *glisseurs, double x_max, double y_max);
+void init_glisseurs(SDL_Rect *glisseurs, SDL_Rect *barres);
