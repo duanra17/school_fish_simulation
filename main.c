@@ -188,7 +188,7 @@ int main(){
                 banc[i].dir = nouvelle_dir;
             }
             else{
-                if(fabs(nouvelle_dir - banc[i].dir)<=180){
+                if(fabs(modulo360(nouvelle_dir - banc[i].dir))<=180){
                     banc[i].dir = modulo360(banc[i].dir + theta*tau);
                 }else{
                     banc[i].dir = modulo360(banc[i].dir - theta*tau);
