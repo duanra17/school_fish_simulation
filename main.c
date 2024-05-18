@@ -11,28 +11,28 @@
 int main(){
 
     int N = 50; // Nombre de poissons (Indicés de 0 à N-1)
-    double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 10; // En ms
+    double tau = 0.01; // En s
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 800;
 
     // Paramètres variables
     /*
-    para[0]: s // Norme de la vitesse des poissons (longueur/ms)
+    para[0]: s // Norme de la vitesse des poissons (longueur/s)
     para[1]: rr // Rayon de la zone de répulsion
     para[2]: ro // Rayon de la zone d'orientation
     para[3]: ra // Rayon de la zone d'attraction
         Il faudrait : rr <= ro <= ra
     para[4]: sigma2 // Variance de la gaussienne, correspond au tortillage (wiggle)
     para[5]: alpha // Champ de perception (angle)
+    para[6]: theta // Vitesse de rotation du poisson (°/s)
     */
 
-    double  para[6]; // Liste des paramètres variables
-    //      para[6]    = {s, rr, ro, ra, sigma2, alpha}
-    double para_max[6] = {2, 100, 100, 100, 40, 359}; // Maximums des paramètres
-    double para_min[6] = {0.1, 5, 5, 5, 0.1, 1};  // Minimums des paramètres
+    double  para[7]; // Liste des paramètres variables
+    //      para[7]    = {s, rr, ro, ra, sigma2, alpha}
+    double para_max[7] = {500, 10, 160, 310, 130, 359, 100}; // Maximums des paramètres
+    double para_min[7] = {10, 0.1, 10, 20, 0, 200, 10};  // Minimums des paramètres
 
-    for (int i=0; i<6; ++i){
+    for (int i=0; i<7; ++i){
         para[i] = para_max[i];
     }
 
@@ -92,9 +92,9 @@ int main(){
         exit(1);
     }
 
-    // Barres pour faire varier les paramètres
-    SDL_Rect * barres = malloc(sizeof(SDL_Rect)*6);
-    SDL_Rect * glisseurs = malloc(sizeof(SDL_Rect)*6);
+    // Barres et glisseurs pour faire varier les paramètres
+    SDL_Rect * barres = malloc(sizeof(SDL_Rect)*7);
+    SDL_Rect * glisseurs = malloc(sizeof(SDL_Rect)*7);
     
     if (barres == NULL){
         printf("Erreur allocation mémoire \n ");
@@ -122,7 +122,7 @@ int main(){
         
             // Modification des paramètres variables
             if (event.button.button == SDL_BUTTON_LEFT){
-                for (int i=0; i<6; ++i){
+                for (int i=0; i<7; ++i){
                     float xs = event.button.x;// Coordonnées de la souris
                     float ys = event.button.y;// Coordonnées de la souris
                     // Si la souris se trouve dans la barre
@@ -181,14 +181,15 @@ int main(){
         // Modification de la direction de chaque poisson
         for (int i=0; i<N; ++i){
             double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,para[4]));
-            if (fabs(nouvelle_dir - banc[i].dir) < theta*tau || fabs(nouvelle_dir - banc[i].dir) > 360 - theta*tau){
+            if (fabs(nouvelle_dir - banc[i].dir) < para[6]*tau || fabs(nouvelle_dir - banc[i].dir) > 360 - para[6]*tau){
+                // para[6] = theta
                 banc[i].dir = nouvelle_dir;
             }
             else{
                 if(fabs(nouvelle_dir - banc[i].dir)<=180){
-                    banc[i].dir = modulo360(banc[i].dir + theta*tau);
+                    banc[i].dir = modulo360(banc[i].dir + para[6]*tau);
                 }else{
-                    banc[i].dir = modulo360(banc[i].dir - theta*tau);
+                    banc[i].dir = modulo360(banc[i].dir - para[6]*tau);
                 }
             }
 
@@ -206,7 +207,7 @@ int main(){
         render(renderer, &texture, banc, N, barres, glisseurs);
         
         //Delay to control the frame rate
-        SDL_Delay(tau); // en ms
+        SDL_Delay(tau*1000); // en ms
     }
     
     // Fin de la boucle temporelle

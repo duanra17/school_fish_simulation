@@ -312,13 +312,13 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
 
     // Barres
     SDL_SetRenderDrawColor(renderer, 180, 180, 180, 255);
-    for (int i=0; i<6; ++i){
+    for (int i=0; i<7; ++i){
         SDL_RenderFillRect(renderer,&barres[i]);     
     }
 
     // Glisseurs
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-    for (int i=0; i<6; ++i){
+    for (int i=0; i<7; ++i){
         SDL_RenderFillRect(renderer,&glisseurs[i]);
     }
     
@@ -328,17 +328,17 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
 
 void init_barres(SDL_Rect *barres, double x_max, double y_max){
     // Definition de la position des barres
-    for (int i = 0; i<6; ++i){
+    for (int i = 0; i<7; ++i){
         barres[i].h = 20;
         barres[i].x = x_max + 100; 
-        barres[i].y = (i+1)*y_max/7 - barres[i].h/2;
+        barres[i].y = (i+1)*y_max/8 - barres[i].h/2;
         barres[i].w = 200;
     }
 }
 
 void init_glisseurs(SDL_Rect *glisseurs, SDL_Rect *barres){
     // Definition de la position des barres
-    for (int i = 0; i<6; ++i){
+    for (int i = 0; i<7; ++i){
         glisseurs[i].h = barres[i].h;
         glisseurs[i].w = 30;
         glisseurs[i].x = barres[i].x + barres[i].w - glisseurs[i].w/2; // Variable
