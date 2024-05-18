@@ -12,7 +12,7 @@ int main(){
 
     int N = 50; // Nombre de poissons (Indicés de 0 à N-1)
     double theta = 0.8; // Vitesse de rotation du poisson (°/ms)
-    unsigned int tau = 10; // En ms
+    double tau = 10; // En ms
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 800;
 
