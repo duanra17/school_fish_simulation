@@ -72,6 +72,8 @@ int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
     }
 }
 
+
+// Renvoie l'argument du vecteur qui relie le poisson P1 au poisson P2.
 double arg_dist_poissons(struct poisson P1, struct poisson P2){
     // Renvoie l'argument du vecteur qui relie le poisson P1 au poisson P2.
 
@@ -88,7 +90,7 @@ double arg_dist_poissons(struct poisson P1, struct poisson P2){
 // Fonctions nécessaires au traitement
 
 
-
+// Renvoie la nouvelle direction du poisson, dans le cas de la répulsion
 double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int indP){
     // indices_zr: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZR du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de la répulsion
@@ -162,6 +164,8 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
 //             return(tmp);
 // }
 
+
+// Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
 double attraction(int* indices_za, int N, struct poisson* banc, int indP){
     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
@@ -182,6 +186,7 @@ double attraction(int* indices_za, int N, struct poisson* banc, int indP){
 }
 
 
+// Renvoie la nouvelle direction du poisson, dans le cas de l'orientation
 double orientation(int* indices_zo, int N, struct poisson* banc){ 
     // indices_zo: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZO du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de l'orientation
@@ -206,6 +211,7 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
 }
 // --------------------------------------------------------------------------
 
+// Détermine la direction privilégiée du poisson
 int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP, int zone){
     // Ne renvoie rien (d'intéressant).
 
@@ -256,6 +262,7 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
     return(0); //Pour retirer un Warning à la compilation
 }
 
+// Renvoie une valeur aléatoire générée à l'aide de la méthode de Box-Muller
 double gaussienne(double mu, double sigma){
     // On utilise la méthode de Box-Muller pour simuler une loi gaussienne
     double U1 = ((double)rand())/(double)RAND_MAX;
@@ -270,6 +277,8 @@ double gaussienne(double mu, double sigma){
     return N;
 }
 
+
+// La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
 void mur(struct poisson* P, double s, double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
     double d_bord = s*tau; //Distance pour laquelle, au pas suivant, le poisson risque de sortir.
@@ -297,6 +306,8 @@ void mur(struct poisson* P, double s, double tau, double x_max, double y_max){
     }
 }
 
+
+// La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
 int zones(struct poisson P, double s,double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
     double d_bord = 20*s*tau; //Distance pour laquelle le poisson détecte le mur
@@ -364,6 +375,7 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
     SDL_RenderPresent(renderer);
 }
 
+// Definition de la position des barres
 void init_barres(SDL_Rect *barres, double x_max, double y_max){
     // Definition de la position des barres
     for (int i = 0; i<7; ++i){
@@ -374,8 +386,9 @@ void init_barres(SDL_Rect *barres, double x_max, double y_max){
     }
 }
 
+// Definition de la position des glisseurs
 void init_glisseurs(SDL_Rect *glisseurs, SDL_Rect *barres){
-    // Definition de la position des barres
+    // Definition de la position des glisseurs
     for (int i = 0; i<7; ++i){
         glisseurs[i].h = barres[i].h;
         glisseurs[i].w = 30;

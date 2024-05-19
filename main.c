@@ -8,8 +8,12 @@
     #define  M_PI  3.1415926535897932384626433
 #endif
 
+
+
+
 int main(){
 
+    // Initialisation des paramètres fixes
     int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
     double tau = 0.1; // En s
     double x_max = 1000; // Bornes de la zone disponible
@@ -28,9 +32,9 @@ int main(){
     */
 
     double  para[7]; // Liste des paramètres variables
-    //      para[7]    = {s, rr, ro, ra, sigma2, alpha, theta}
-    double para_max[7] = {100, 10, 150, 150, 130, 359, 100}; // Maximums des paramètres
-    double para_min[7] = {10, 0, 0, 0, 0, 200, 10};  // Minimums des paramètres
+    //      para[7]    = {  s,   rr,   ro,   ra, sigma2, alpha, theta }
+    double para_max[7] = {100,   10,  150,  150,    130,   359,   100 }; // Maximums des paramètres
+    double para_min[7] = { 10,    0,    0,    0,      0,   200,    10 };  // Minimums des paramètres
 
     for (int i=0; i<7; ++i){
         para[i] = para_max[i];
@@ -55,6 +59,10 @@ int main(){
     int* indices_za = malloc(sizeof(int)*N); // Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
     int* indices_zr = malloc(sizeof(int)*N); // idem pour ZR
     int* indices_zo = malloc(sizeof(int)*N); // idem pour ZO
+
+
+//--------------------------------------------------------------------------------------------------------------------------------
+
 
     // Initialisation de l'affichage 
     if (SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -111,12 +119,16 @@ int main(){
     }
     init_barres(barres, x_max, y_max);
     init_glisseurs(glisseurs, barres);
-    
+
+
+//-------------------------------------------------------------------------------------------------------------------------------- 
+
     // Boucle temporelle
     SDL_Event event;
     int quit = 0;
 
     while (!quit){
+        
         while (SDL_PollEvent(&event) != 0){
             // Fermeture de la fenêtre
             if (event.type == SDL_QUIT) {
@@ -125,12 +137,13 @@ int main(){
         
             // Modification des paramètres variables
             if (event.button.button == SDL_BUTTON_LEFT){
+
                 for (int i=0; i<7; ++i){
                     float xs = event.button.x;// Coordonnées de la souris
                     float ys = event.button.y;// Coordonnées de la souris
+
                     // Si la souris se trouve dans la barre
                     if (barres[i].y<ys && barres[i].y+barres[i].h>ys && barres[i].x<xs && barres[i].x+barres[i].w>xs){
-                        // TO DO : remplacer s par un paramètre quelconque
                         float pente = (para_max[i]-para_min[i])/(barres[i].w); // Pente de la relation linéaire entre abscisse et paramètre
                         para[i] = pente*(xs-barres[i].x) + para_min[i];
                         glisseurs[i].x = xs - glisseurs[i].w/2;
