@@ -18,9 +18,9 @@ int dans_angle_mort(struct poisson A, struct poisson B, double alpha);
 
 double arg_dist_poissons(struct poisson P1, struct poisson P2);
 
-double repulsion(int* indices_zr, int N, struct poisson* banc, int zone);
+double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int indP);
 
-double attraction(int* indices_za, int N, struct poisson* banc);
+double attraction(int* indices_za, int N, struct poisson* banc, int indP);
 
 double orientation(int* indices_zo, int N, struct poisson* banc);
 

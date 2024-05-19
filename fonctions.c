@@ -75,9 +75,9 @@ int dans_angle_mort(struct poisson A, struct poisson B, double alpha){
 double arg_dist_poissons(struct poisson P1, struct poisson P2){
     // Renvoie l'argument du vecteur qui relie le poisson P1 au poisson P2.
 
-    double theta = (360/(2*M_PI))*acos( (P2.x-P1.x) / sqrt((P2.x-P1.x)*(P2.x-P1.x) + (P2.y-P1.y)*(P2.y-P1.y)));
+    double theta = (360/(2*M_PI))*acos( (P2.x-P1.x) / distance(P1,P2));
 
-    if(P2.y<=P1.y){
+    if(P2.y>=P1.y){
         return theta;
     }else{
         return modulo360(-theta);
@@ -89,16 +89,22 @@ double arg_dist_poissons(struct poisson P1, struct poisson P2){
 
 
 
-double repulsion(int* indices_zr, int N, struct poisson* banc, int zone){
+double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int indP){
     // indices_zr: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZR du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de la répulsion
+    double COS=0;
+    double SIN=0;
     double tmp = 0;
-    int compt = 0;
             for(int j=0; j<N; j++){
-                tmp = tmp + indices_zr[j]*(arg_dist_poissons(banc[N], banc[j])); 
-                compt++;
+                if( j != indP){
+                    COS = COS + indices_zr[j]*( (2*M_PI/360) * cos(arg_dist_poissons(banc[indP], banc[j])) );
+                    SIN = SIN + indices_zr[j]*( (2*M_PI/360) * sin(arg_dist_poissons(banc[indP], banc[j])) );   
+                }
             }
+            tmp = (360/(2*M_PI)) * atan2(SIN,COS);
+        
 
+            int compt = 0;
             if(zone == 1){
                 tmp = tmp + 10*270;
                 compt = compt + 10;
@@ -137,23 +143,44 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone){
                 compt = compt + 10;
             }
 
-            tmp = modulo360(tmp/compt + 180); // +180 ~ *-1 en vecteur
-
+            tmp = modulo360(tmp + 180); // +180 ~ *-1 en vecteur
+            
             return(tmp);
 }
 
-double attraction(int* indices_za, int N, struct poisson* banc){
+
+// double attraction(int* indices_za, int N, struct poisson* banc, int indP){
+//     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
+//     // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
+//     int compt = 0;
+//     double tmp = 0;
+//             for(int j=0; j<N; j++){
+//                 tmp = tmp + indices_za[j]*(arg_dist_poissons(banc[indP], banc[j]));
+//                 compt = compt + indices_za[j];
+//             }
+//             tmp = modulo360(tmp)/compt;
+//             return(tmp);
+// }
+
+double attraction(int* indices_za, int N, struct poisson* banc, int indP){
     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
-    int compt = 0;
+    double COS=0;
+    double SIN=0;
     double tmp = 0;
             for(int j=0; j<N; j++){
-                tmp = tmp + indices_za[j]*(arg_dist_poissons(banc[N], banc[j]));
-                compt++;
+                if( j != indP){
+                    COS = COS + indices_za[j]*( (2*M_PI/360) * cos(arg_dist_poissons(banc[indP], banc[j])) );
+                    SIN = SIN + indices_za[j]*( (2*M_PI/360) * sin(arg_dist_poissons(banc[indP], banc[j])) );
+                }
             }
-            tmp = modulo360(tmp/compt);
+            tmp = (360/(2*M_PI)) * atan2(SIN,COS);
+            
+            tmp = modulo360(tmp);
+            
             return(tmp);
 }
+
 
 double orientation(int* indices_zo, int N, struct poisson* banc){ 
     // indices_zo: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZO du poisson i
@@ -162,13 +189,16 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
     // Théoriquement, on aurait besoin de la vitesse, mais la vitesse du poisson et sa direction sont colinéaires. 
     // On n'a donc pas besoin de la prendre en compte. 
     // Cette fonction entre dans le cas d'une même vitesse pour tous les poissons, sinon il faut créer une liste des vitesses en amont. 
-    int compt = 0;
+    double COS=0;
+    double SIN=0;
     double tmp = 0;
             for(int j=0; j<N; j++){
-                tmp = tmp + indices_zo[j]*(banc[j].dir);
-                compt++;
+                COS = COS + indices_zo[j]*( (2*M_PI/360) * cos(banc[j].dir) );
+                SIN = SIN + indices_zo[j]*( (2*M_PI/360) * sin(banc[j].dir) );   
             }
-            tmp = modulo360(tmp/compt);
+            tmp = (360/(2*M_PI)) * atan2(SIN,COS);
+
+            tmp = modulo360(tmp);
             
             return(tmp);
 
@@ -195,7 +225,7 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
 
     for(int i=0; i<N; i++){
         if(indices_zr[i] || zone!=0){// Si au moins un poisson est dans la zone de répulsion, on ne fait pas les autres boucles.
-            dir_temp[indP] = repulsion(indices_zr, N, banc, zone);
+            dir_temp[indP] = repulsion(indices_zr, N, banc, zone, indP);
             return(0);
         }
         if(indices_za[i]){ // Si au moins un poisson est dans la zone d'attraction
@@ -208,17 +238,18 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
     // Si on est sorti de cette boucle, c'est qu'aucun poisson n'est dans la zone de répulsion. 
     // On applique le traitement en fonction des résultats des tests précédents.
     if(test_a && !test_o){
-        dir_temp[indP] = attraction(indices_za, N, banc);
+        dir_temp[indP] = attraction(indices_za, N, banc, indP);
         return(0);
     }
-
+/* Inutile maintenant
     if(test_o && !test_a){
         dir_temp[indP] = orientation(indices_zo, N, banc);
         return(0);
     }
+*/
 
     if(test_a && test_o){
-        dir_temp[indP] = (attraction(indices_za, N, banc) + orientation(indices_zo, N, banc))/2;
+        dir_temp[indP] = (attraction(indices_za, N, banc, indP) + orientation(indices_zo, N, banc))/2;
         return(0);
     }
 

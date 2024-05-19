@@ -10,8 +10,8 @@
 
 int main(){
 
-    int N = 50; // Nombre de poissons (Indicés de 0 à N-1)
-    double tau = 0.01; // En s
+    int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
+    double tau = 0.1; // En s
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 800;
 
@@ -28,9 +28,9 @@ int main(){
     */
 
     double  para[7]; // Liste des paramètres variables
-    //      para[7]    = {s, rr, ro, ra, sigma2, alpha}
-    double para_max[7] = {500, 10, 160, 310, 130, 359, 100}; // Maximums des paramètres
-    double para_min[7] = {10, 0.1, 10, 20, 0, 200, 10};  // Minimums des paramètres
+    //      para[7]    = {s, rr, ro, ra, sigma2, alpha, theta}
+    double para_max[7] = {100, 10, 150, 150, 130, 359, 100}; // Maximums des paramètres
+    double para_min[7] = {10, 0, 0, 0, 0, 200, 10};  // Minimums des paramètres
 
     for (int i=0; i<7; ++i){
         para[i] = para_max[i];
@@ -48,7 +48,7 @@ int main(){
 
     double* dir_temp = malloc(sizeof(double)*N);// Liste des directions des poissons à l'instant suivant
     if (dir_temp == NULL) { //Test du malloc
-    printf("Erreur d'allocation de mémoire\n");
+        printf("Erreur d'allocation de mémoire\n");
     return 1;
         }
 
@@ -164,11 +164,11 @@ int main(){
                             // Le poisson j est dans la ZR du poisson i
                             indices_zr[j] = 1;
                         }
-                        else if (distance(banc[i],banc[j])<para[2]){
+                        else if (distance(banc[i],banc[j])<para[1]+para[2]){
                             // Le poisson j est dans la ZO du poisson i
                             indices_zo[j] = 1;
                         }
-                        else if (distance(banc[i],banc[j])<para[3]){
+                        else if (distance(banc[i],banc[j])<para[1]+para[2]+para[3]){
                             // Le poisson j est dans la ZA du poisson i
                             indices_za[j] = 1;
                         //Autre cas : le poisson j n'est dans aucune zone voisine du poisson i
@@ -184,16 +184,29 @@ int main(){
         // Modification de la direction de chaque poisson
         for (int i=0; i<N; ++i){
             double nouvelle_dir = modulo360(dir_temp[i] + gaussienne(0,para[4]));
-            if (fabs(nouvelle_dir - banc[i].dir) < para[6]*tau || fabs(nouvelle_dir - banc[i].dir) > 360 - para[6]*tau){
+            if (fabs(nouvelle_dir - banc[i].dir) <= para[6]*tau || fabs(nouvelle_dir - banc[i].dir) >= 360 - para[6]*tau){
+                // On est dans l'intervalle des rotations possibles pour le poisson
                 // para[6] = theta
                 banc[i].dir = nouvelle_dir;
             }
             else{
-                if(fabs(modulo360(nouvelle_dir - banc[i].dir))<=180){
+                // La rotation exigée est trop grande pour le poisson.
+                // On fait tourner le poisson de l'angle de rotation maximal (theta*tau)
+
+                if(nouvelle_dir - banc[i].dir>0 && nouvelle_dir - banc[i].dir<=180){
                     banc[i].dir = modulo360(banc[i].dir + para[6]*tau);
-                }else{
+                
+                }else if(nouvelle_dir - banc[i].dir>0 && nouvelle_dir - banc[i].dir>180){
                     banc[i].dir = modulo360(banc[i].dir - para[6]*tau);
+                    
+                }else if(nouvelle_dir - banc[i].dir<0 && fabs(nouvelle_dir - banc[i].dir)<=180){
+                    banc[i].dir = modulo360(banc[i].dir - para[6]*tau);
+                    
+                }else if(nouvelle_dir - banc[i].dir<0 && fabs(nouvelle_dir - banc[i].dir)>180){
+                    banc[i].dir = modulo360(banc[i].dir + para[6]*tau);
+                    
                 }
+
             }
 
             // On vérifie que le poisson ne fonce pas dans le mur
@@ -210,7 +223,7 @@ int main(){
         render(renderer, &texture, banc, N, barres, glisseurs, aquarium);
         
         //Delay to control the frame rate
-        SDL_Delay(tau*1000); // en ms
+        SDL_Delay(50); // en ms
     }
     
     // Fin de la boucle temporelle
