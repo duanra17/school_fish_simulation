@@ -14,7 +14,7 @@
 int main(){
 
     // Initialisation des paramètres fixes
-    int N = 100; // Nombre de poissons (Indicés de 0 à N-1)
+    int N = 80; // Nombre de poissons (Indicés de 0 à N-1)
     double tau = 0.1; // En s
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 800;
@@ -33,7 +33,7 @@ int main(){
 
     double  para[7]; // Liste des paramètres variables
     //      para[7]    = {  s,   rr,   ro,   ra, sigma2, alpha, theta }
-    double para_max[7] = {100,   10,  150,  150,    130,   359,   100 }; // Maximums des paramètres
+    double para_max[7] = {100,   10,  150,  150,    10,   359,   100 }; // Maximums des paramètres
     double para_min[7] = { 10,    0,    0,    0,      0,   200,    10 };  // Minimums des paramètres
 
     for (int i=0; i<7; ++i){

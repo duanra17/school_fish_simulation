@@ -150,21 +150,6 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
             return(tmp);
 }
 
-
-// double attraction(int* indices_za, int N, struct poisson* banc, int indP){
-//     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
-//     // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
-//     int compt = 0;
-//     double tmp = 0;
-//             for(int j=0; j<N; j++){
-//                 tmp = tmp + indices_za[j]*(arg_dist_poissons(banc[indP], banc[j]));
-//                 compt = compt + indices_za[j];
-//             }
-//             tmp = modulo360(tmp)/compt;
-//             return(tmp);
-// }
-
-
 // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
 double attraction(int* indices_za, int N, struct poisson* banc, int indP){
     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
@@ -213,17 +198,6 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
 
 // Détermine la direction privilégiée du poisson
 int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_temp, int N, struct poisson* banc, int indP, int zone){
-    // Ne renvoie rien (d'intéressant).
-
-    /* indices_za, indices_zr et indices_zo indiquent la position des poissons par rapport aux zones
-    du poisson en question.*/
-
-/*     double d_r = 0;
-    double d_o = 0;
-    double d_a = 0;
-
-    double tmp = 0; // Variable temporaire */
-
     // On teste si les poissons sont dans les zones de répulsion, d'attraction et d'orientation
     // Les variables de test sont initialisées à 0
     int test_a = 0;
