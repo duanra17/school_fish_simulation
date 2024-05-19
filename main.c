@@ -50,7 +50,7 @@ int main(){
         initialisation(&banc[i],x_max,y_max);
     }
     double* dir_temp = malloc(sizeof(double)*N);// Liste des directions des poissons à l'instant suivant
-    if (dir_temp == NULL) { //Test du malloc
+    if (dir_temp == NULL) {
         printf("Erreur d'allocation de mémoire\n");
         return 1;
     }
@@ -103,7 +103,7 @@ int main(){
     SDL_Surface ** surfaces_nom = malloc(sizeof(SDL_Surface*)*9);
     SDL_Texture ** textures_nom = malloc(sizeof(SDL_Texture*)*9); 
     // Liste des textures des noms des barres (indices 0-7), le moins (8) et le plus (9).
-    if (surfaces_nom == NULL || textures_nom == NULL) { // Test des malloc
+    if (surfaces_nom == NULL || textures_nom == NULL) {
         printf("Erreur d'allocation de mémoire\n");
         return 1;
     }    
@@ -137,7 +137,7 @@ int main(){
 
     SDL_Rect * noms = malloc(sizeof(SDL_Rect)*7);
     SDL_Rect * signes = malloc(sizeof(SDL_Rect)*2*7); // Indices pairs --> moins. Indices impairs --> plus.
-    if (noms == NULL || signes == NULL) { // Test des malloc
+    if (noms == NULL || signes == NULL) {
         printf("Erreur d'allocation de mémoire\n");
         return 1;
     }
@@ -277,14 +277,16 @@ int main(){
     }
     
     // Fin de la boucle temporelle
-    free(dir_temp);
     free(banc);
+    free(dir_temp);
     free(indices_za);
     free(indices_zo);
     free(indices_zr);
     free(textures_nom);
     free(noms);
     free(signes);
+    free(barres);
+    free(glisseurs);
 
     SDL_DestroyWindow(window);
     SDL_Quit();
