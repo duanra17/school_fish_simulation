@@ -241,12 +241,12 @@ int traitement(int* indices_za, int* indices_zr, int* indices_zo, double* dir_te
         dir_temp[indP] = attraction(indices_za, N, banc, indP);
         return(0);
     }
-/* Inutile maintenant
+
     if(test_o && !test_a){
         dir_temp[indP] = orientation(indices_zo, N, banc);
         return(0);
     }
-*/
+
 
     if(test_a && test_o){
         dir_temp[indP] = (attraction(indices_za, N, banc, indP) + orientation(indices_zo, N, banc))/2;

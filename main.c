@@ -164,11 +164,11 @@ int main(){
                             // Le poisson j est dans la ZR du poisson i
                             indices_zr[j] = 1;
                         }
-                        else if (distance(banc[i],banc[j])<para[1]+para[2]){
+                        else if (distance(banc[i],banc[j])<para[2]){
                             // Le poisson j est dans la ZO du poisson i
                             indices_zo[j] = 1;
                         }
-                        else if (distance(banc[i],banc[j])<para[1]+para[2]+para[3]){
+                        else if (distance(banc[i],banc[j])<para[3]){
                             // Le poisson j est dans la ZA du poisson i
                             indices_za[j] = 1;
                         //Autre cas : le poisson j n'est dans aucune zone voisine du poisson i
@@ -223,7 +223,7 @@ int main(){
         render(renderer, &texture, banc, N, barres, glisseurs, aquarium);
         
         //Delay to control the frame rate
-        SDL_Delay(50); // en ms
+        SDL_Delay(10); // en ms
     }
     
     // Fin de la boucle temporelle
