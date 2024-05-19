@@ -49,12 +49,11 @@ int main(){
     for(int i = 0; i<N; i++){
         initialisation(&banc[i],x_max,y_max);
     }
-
     double* dir_temp = malloc(sizeof(double)*N);// Liste des directions des poissons à l'instant suivant
     if (dir_temp == NULL) { //Test du malloc
         printf("Erreur d'allocation de mémoire\n");
-    return 1;
-        }
+        return 1;
+    }
 
     int* indices_za = malloc(sizeof(int)*N); // Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
     int* indices_zr = malloc(sizeof(int)*N); // idem pour ZR
@@ -100,24 +99,63 @@ int main(){
         exit(1);
     }
 
+    // Noms des barres
+    SDL_Surface ** surfaces_nom = malloc(sizeof(SDL_Surface*)*9);
+    SDL_Texture ** textures_nom = malloc(sizeof(SDL_Texture*)*9); 
+    // Liste des textures des noms des barres (indices 0-7), le moins (8) et le plus (9).
+    if (surfaces_nom == NULL || textures_nom == NULL) { // Test des malloc
+        printf("Erreur d'allocation de mémoire\n");
+        return 1;
+    }    
+    surfaces_nom[0] = IMG_Load("paramètre0.bmp");
+    surfaces_nom[1] = IMG_Load("paramètre1.bmp");    
+    surfaces_nom[2] = IMG_Load("paramètre2.bmp");    
+    surfaces_nom[3] = IMG_Load("paramètre3.bmp");    
+    surfaces_nom[4] = IMG_Load("paramètre4.bmp");    
+    surfaces_nom[5] = IMG_Load("paramètre5.bmp");    
+    surfaces_nom[6] = IMG_Load("paramètre6.bmp");    
+    surfaces_nom[7] = IMG_Load("Moins.bmp");
+    surfaces_nom[8] = IMG_Load("Plus.bmp"); 
+
+    for (int i=0; i<9; ++i){
+        if (surfaces_nom[i] == NULL){
+            fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
+            SDL_Quit();
+            exit(1);
+        }   
+
+        textures_nom[i] = SDL_CreateTextureFromSurface(renderer, surfaces_nom[i]);
+        SDL_FreeSurface(surfaces_nom[i]);
+        if (textures_nom[i] == NULL){
+            fprintf(stderr, "Failed to create texture: %s \n ", SDL_GetError());
+            SDL_Quit();
+            exit(1);
+        }
+    }
+
+    free(surfaces_nom);
+
+    SDL_Rect * noms = malloc(sizeof(SDL_Rect)*7);
+    SDL_Rect * signes = malloc(sizeof(SDL_Rect)*2*7); // Indices pairs --> moins. Indices impairs --> plus.
+    if (noms == NULL || signes == NULL) { // Test des malloc
+        printf("Erreur d'allocation de mémoire\n");
+        return 1;
+    }
+
     // Barres et glisseurs pour faire varier les paramètres
     SDL_Rect * barres = malloc(sizeof(SDL_Rect)*7);
     SDL_Rect * glisseurs = malloc(sizeof(SDL_Rect)*7);
-
+    
     // Pour encadrer les poissons
     SDL_Rect aquarium = {0, 0, x_max+30, y_max+30};
 
-    if (barres == NULL){
+    if (barres == NULL || glisseurs == NULL){
         printf("Erreur allocation mémoire \n ");
         SDL_Quit();
         exit(1);
     }
-    if (glisseurs == NULL){
-        printf("Erreur allocation mémoire \n ");
-        SDL_Quit();
-        exit(1);
-    }
-    init_barres(barres, x_max, y_max);
+
+    init_barres(barres, x_max, y_max, noms, signes);
     init_glisseurs(glisseurs, barres);
 
 
@@ -149,8 +187,7 @@ int main(){
                         glisseurs[i].x = xs - glisseurs[i].w/2;
                     }
                 }
-            }
-            
+            }  
         }
 
         // Remplissage de dir_temp, permet de garder les mêmes valeurs des poissons à l'instant t.
@@ -233,7 +270,7 @@ int main(){
         }
 
         // Render the updated positions
-        render(renderer, &texture, banc, N, barres, glisseurs, aquarium);
+        render(renderer, &texture, banc, N, barres, glisseurs, aquarium, noms, signes, textures_nom);
         
         //Delay to control the frame rate
         SDL_Delay(10); // en ms
@@ -245,6 +282,9 @@ int main(){
     free(indices_za);
     free(indices_zo);
     free(indices_zr);
+    free(textures_nom);
+    free(noms);
+    free(signes);
 
     SDL_DestroyWindow(window);
     SDL_Quit();

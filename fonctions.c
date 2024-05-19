@@ -341,7 +341,7 @@ int zones(struct poisson P, double s,double tau, double x_max, double y_max){
 
 
 // Fenêtre
-void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs, SDL_Rect aquarium){
+void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs, SDL_Rect aquarium, SDL_Rect *noms, SDL_Rect *signes, SDL_Texture ** textures_nom){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     
@@ -353,7 +353,17 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
         rects[i].w = 30;
         rects[i].h = 30;
         SDL_RenderCopyEx (renderer,*texture, NULL, &rects[i], banc[i].dir, NULL, SDL_FLIP_NONE);
-    }  
+    }
+
+    // Noms et signes
+    for (int i=0; i<7; ++i){
+        // Noms
+        SDL_RenderCopy(renderer,textures_nom[i], NULL, &noms[i]);
+        // Moins
+        SDL_RenderCopy(renderer,textures_nom[7], NULL, &signes[2*i]);
+        // Plus
+        SDL_RenderCopy(renderer,textures_nom[8], NULL, &signes[2*i+1]);
+    }
 
     // Barres
     SDL_SetRenderDrawColor(renderer, 180, 180, 180, 255);
@@ -376,14 +386,37 @@ void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc,
 }
 
 // Definition de la position des barres
-void init_barres(SDL_Rect *barres, double x_max, double y_max){
-    // Definition de la position des barres
+void init_barres(SDL_Rect *barres, double x_max, double y_max, SDL_Rect *noms, SDL_Rect *signes){
     for (int i = 0; i<7; ++i){
+        // Definition des positions et taile des barres
         barres[i].h = 20;
         barres[i].x = x_max + 100; 
         barres[i].y = (i+1)*y_max/8 - barres[i].h/2;
         barres[i].w = 200;
+        // Définition de la position et taille des noms des barres
+        noms[i].h = 40;
+        noms[i].x = barres[i].x; 
+        noms[i].y = barres[i].y - noms[i].h ;
+        // Définition de la position et taille des signes
+            // Pour les moins
+        signes[2*i].h = 40;
+        signes[2*i].w = 40;
+        signes[2*i].x = barres[i].x - 30 - signes[2*i].w/2; 
+        signes[2*i].y = barres[i].y - signes[2*i].h/4;
+            //Pour les plus
+        signes[2*i+1].h = 40;
+        signes[2*i+1].w = 40;
+        signes[2*i+1].x = barres[i].x + barres[i].w + 5 + signes[2*i+1].w/2; 
+        signes[2*i+1].y = barres[i].y - signes[2*i+1].h/4;
     }
+    noms[0].w = 90;
+    noms[1].w = 190;
+    noms[2].w = 210;
+    noms[3].w = 200;
+    noms[4].w = 130;
+    noms[5].w = 210;
+    noms[6].w = 200;
+
 }
 
 // Definition de la position des glisseurs
