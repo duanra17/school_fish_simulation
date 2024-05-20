@@ -106,43 +106,34 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
             
         
 
-            int compt = 0;
+            
             if(zone == 1){
-                tmp = tmp + 10*270;
-                compt = compt + 10;
+                SIN = SIN-10;
             }
             if(zone == 2){
-                tmp = tmp + 10*90;
-                compt = compt + 10;
+                SIN = SIN+10;
             }
             if(zone == 3){
-                tmp = tmp + 10*180;
-                compt = compt + 10;
+                COS = COS-10;
             }
             if(zone == 4){
-                compt = compt + 10;
+                COS = COS+10;
             }
             if(zone == 5){
-                tmp = tmp + 10*270;
-                compt = compt + 10;
-                compt = compt + 10;
+                COS = COS + 10*cos(-M_PI/4);
+                SIN = SIN + 10*sin(-M_PI/4);
             }
             if(zone == 6){
-                tmp = tmp + 10*90;
-                compt = compt + 10;
-                compt = compt + 10;
+                COS = COS + 10*cos(M_PI/4);
+                SIN = SIN + 10*sin(M_PI/4);
             }
             if(zone == 7){
-                tmp = tmp + 10*180;
-                compt = compt + 10;
-                tmp = tmp + 10*90;
-                compt = compt + 10;
+                COS = COS + 10*cos(3*M_PI/4);
+                SIN = SIN + 10*sin(3*M_PI/4);
             }
             if(zone == 8){
-                tmp = tmp + 10*270;
-                compt = compt + 10;
-                tmp = tmp + 10*180;
-                compt = compt + 10;
+                COS = COS + 10*cos(-3*M_PI/4);
+                SIN = SIN + 10*sin(-3*M_PI/4);
             }
 
             tmp = (360/(2*M_PI)) * atan2(SIN,COS);
@@ -286,7 +277,7 @@ void mur(struct poisson* P, double s, double tau, double x_max, double y_max){
 // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
 int zones(struct poisson P, double s,double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
-    double d_bord = 20*s*tau; //Distance pour laquelle le poisson détecte le mur
+    double d_bord = 10*s*tau; //Distance pour laquelle le poisson détecte le mur
     int zone = 0;
     if(P.y<d_bord){
         zone =  1;
@@ -306,7 +297,7 @@ int zones(struct poisson P, double s,double tau, double x_max, double y_max){
         zone =  8;
     }
 
-    zone = 0; //Pour retirer cette fonctionalité
+    //zone = 0; //Pour retirer cette fonctionalité
 
     return zone;
 }
