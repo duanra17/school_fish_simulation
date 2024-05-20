@@ -99,6 +99,8 @@ int main(){
         exit(1);
     }
 
+    SDL_Rect * poissons = malloc(sizeof(SDL_Rect)*N);
+
     // Noms des barres
     SDL_Surface ** surfaces_nom = malloc(sizeof(SDL_Surface*)*9);
     SDL_Texture ** textures_nom = malloc(sizeof(SDL_Texture*)*9); 
@@ -270,7 +272,7 @@ int main(){
         }
 
         // Render the updated positions
-        render(renderer, &texture, banc, N, barres, glisseurs, aquarium, noms, signes, textures_nom);
+        render(renderer, &texture, banc, N, barres, glisseurs, aquarium, noms, signes, textures_nom, poissons);
         
         //Delay to control the frame rate
         SDL_Delay(10); // en ms
@@ -287,6 +289,7 @@ int main(){
     free(signes);
     free(barres);
     free(glisseurs);
+    free(poissons);
 
     SDL_DestroyWindow(window);
     SDL_Quit();

@@ -32,7 +32,8 @@ void mur(struct poisson* P, double s, double tau, double x_max, double y_max);
 
 int zones(struct poisson P, double s,double tau, double x_max, double y_max);
 
-void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect * barres, SDL_Rect *glisseurs, SDL_Rect aquarium, SDL_Rect *noms, SDL_Rect *signes, SDL_Texture ** textures_nom);
+void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect * barres, SDL_Rect *glisseurs, 
+SDL_Rect aquarium, SDL_Rect *noms, SDL_Rect *signes, SDL_Texture ** textures_nom, SDL_Rect *rects);
 
 void init_barres(SDL_Rect *barres, double x_max, double y_max, SDL_Rect *noms, SDL_Rect *signes);
 

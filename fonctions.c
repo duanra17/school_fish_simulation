@@ -176,8 +176,8 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
     double SIN=0;
     double tmp = 0;
             for(int j=0; j<N; j++){
-                COS = COS + indices_zo[j]*( (2*M_PI/360) * cos(banc[j].dir) );
-                SIN = SIN + indices_zo[j]*( (2*M_PI/360) * sin(banc[j].dir) );   
+                COS = COS + indices_zo[j]*( cos( (2*M_PI/360) * banc[j].dir) );
+                SIN = SIN + indices_zo[j]*( sin( (2*M_PI/360) * banc[j].dir) );   
             }
             tmp = (360/(2*M_PI)) * atan2(SIN,COS);
 
@@ -277,7 +277,7 @@ void mur(struct poisson* P, double s, double tau, double x_max, double y_max){
 // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
 int zones(struct poisson P, double s,double tau, double x_max, double y_max){
     // La fonction détermine si un poisson est proche d'un mur (bord de la zone dessinée à l'écran) et le réoriente.
-    double d_bord = 10*s*tau; //Distance pour laquelle le poisson détecte le mur
+    double d_bord = 5*s*tau; //Distance pour laquelle le poisson détecte le mur
     int zone = 0;
     if(P.y<d_bord){
         zone =  1;
@@ -308,12 +308,12 @@ int zones(struct poisson P, double s,double tau, double x_max, double y_max){
 
 
 // Fenêtre
-void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs, SDL_Rect aquarium, SDL_Rect *noms, SDL_Rect *signes, SDL_Texture ** textures_nom){
+void render(SDL_Renderer *renderer, SDL_Texture **texture, struct poisson* banc, int N, SDL_Rect *barres, SDL_Rect *glisseurs, SDL_Rect aquarium, 
+SDL_Rect *noms, SDL_Rect *signes, SDL_Texture ** textures_nom, SDL_Rect * rects){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     
     // Poissons
-    SDL_Rect * rects = malloc(sizeof(SDL_Rect)*N);
     for (int i=0; i<N; ++i){
         rects[i].x = banc[i].x; 
         rects[i].y = banc[i].y;
