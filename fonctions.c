@@ -99,11 +99,11 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
     double tmp = 0;
             for(int j=0; j<N; j++){
                 if( j != indP){
-                    COS = COS + indices_zr[j]*( (2*M_PI/360) * cos(arg_dist_poissons(banc[indP], banc[j])) );
-                    SIN = SIN + indices_zr[j]*( (2*M_PI/360) * sin(arg_dist_poissons(banc[indP], banc[j])) );   
+                    COS = COS + indices_zr[j]*( cos( (2*M_PI/360) * arg_dist_poissons(banc[indP], banc[j])) );
+                    SIN = SIN + indices_zr[j]*( sin( (2*M_PI/360) * arg_dist_poissons(banc[indP], banc[j])) );   
                 }
             }
-            tmp = (360/(2*M_PI)) * atan2(SIN,COS);
+            
         
 
             int compt = 0;
@@ -145,6 +145,8 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
                 compt = compt + 10;
             }
 
+            tmp = (360/(2*M_PI)) * atan2(SIN,COS);
+
             tmp = modulo360(tmp + 180); // +180 ~ *-1 en vecteur
             
             return(tmp);
@@ -159,8 +161,8 @@ double attraction(int* indices_za, int N, struct poisson* banc, int indP){
     double tmp = 0;
             for(int j=0; j<N; j++){
                 if( j != indP){
-                    COS = COS + indices_za[j]*( (2*M_PI/360) * cos(arg_dist_poissons(banc[indP], banc[j])) );
-                    SIN = SIN + indices_za[j]*( (2*M_PI/360) * sin(arg_dist_poissons(banc[indP], banc[j])) );
+                    COS = COS + indices_za[j]*( cos( (2*M_PI/360) * arg_dist_poissons(banc[indP], banc[j])) );
+                    SIN = SIN + indices_za[j]*( sin( (2*M_PI/360) * arg_dist_poissons(banc[indP], banc[j])) );
                 }
             }
             tmp = (360/(2*M_PI)) * atan2(SIN,COS);
