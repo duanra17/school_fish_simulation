@@ -1,5 +1,5 @@
 # In104
-BATS Paul
+BATS Paul,
 BRISSET Arnaud
 
 Le but de ce code est de simuler le comportement d'un banc de poissons et de le représenter dans une fenêtre graphique. 
