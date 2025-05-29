@@ -9,13 +9,10 @@
 #endif
 
 
-
-
 int main(){
-
     // Initialisation des paramètres fixes
-    int N = 80; // Nombre de poissons (Indicés de 0 à N-1)
-    double tau = 0.1; // En s
+    int    N     = 80; // Nombre de poissons (Indicés de 0 à N-1)
+    double tau   = 0.1; // En s
     double x_max = 1000; // Bornes de la zone disponible
     double y_max = 800;
 
@@ -59,9 +56,7 @@ int main(){
     int* indices_zr = malloc(sizeof(int)*N); // idem pour ZR
     int* indices_zo = malloc(sizeof(int)*N); // idem pour ZO
 
-
 //--------------------------------------------------------------------------------------------------------------------------------
-
 
     // Initialisation de l'affichage 
     if (SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -85,7 +80,7 @@ int main(){
         return 1;
     }
 
-    SDL_Surface * surface = IMG_Load("poissonter.png");
+    SDL_Surface * surface = IMG_Load("images/poissonter.png");
     if (surface == NULL){
         fprintf(stderr, "Failed to load image: %s \n", IMG_GetError());
         SDL_Quit();
@@ -109,15 +104,15 @@ int main(){
         printf("Erreur d'allocation de mémoire\n");
         return 1;
     }    
-    surfaces_nom[0] = IMG_Load("paramètre0.bmp");
-    surfaces_nom[1] = IMG_Load("paramètre1.bmp");    
-    surfaces_nom[2] = IMG_Load("paramètre2.bmp");    
-    surfaces_nom[3] = IMG_Load("paramètre3.bmp");    
-    surfaces_nom[4] = IMG_Load("paramètre4.bmp");    
-    surfaces_nom[5] = IMG_Load("paramètre5.bmp");    
-    surfaces_nom[6] = IMG_Load("paramètre6.bmp");    
-    surfaces_nom[7] = IMG_Load("Moins.bmp");
-    surfaces_nom[8] = IMG_Load("Plus.bmp"); 
+    surfaces_nom[0] = IMG_Load("images/paramètre0.bmp");
+    surfaces_nom[1] = IMG_Load("images/paramètre1.bmp");    
+    surfaces_nom[2] = IMG_Load("images/paramètre2.bmp");    
+    surfaces_nom[3] = IMG_Load("images/paramètre3.bmp");    
+    surfaces_nom[4] = IMG_Load("images/paramètre4.bmp");    
+    surfaces_nom[5] = IMG_Load("images/paramètre5.bmp");    
+    surfaces_nom[6] = IMG_Load("images/paramètre6.bmp");    
+    surfaces_nom[7] = IMG_Load("images/Moins.bmp");
+    surfaces_nom[8] = IMG_Load("images/Plus.bmp"); 
 
     for (int i=0; i<9; ++i){
         if (surfaces_nom[i] == NULL){
@@ -184,8 +179,8 @@ int main(){
 
                     // Si la souris se trouve dans la barre
                     if (barres[i].y<ys && barres[i].y+barres[i].h>ys && barres[i].x<xs && barres[i].x+barres[i].w>xs){
-                        float pente = (para_max[i]-para_min[i])/(barres[i].w); // Pente de la relation linéaire entre abscisse et paramètre
-                        para[i] = pente*(xs-barres[i].x) + para_min[i];
+                        float pente    = (para_max[i]-para_min[i])/(barres[i].w); // Pente de la relation linéaire entre abscisse et paramètre
+                        para[i]        = pente*(xs-barres[i].x) + para_min[i];
                         glisseurs[i].x = xs - glisseurs[i].w/2;
                     }
                 }

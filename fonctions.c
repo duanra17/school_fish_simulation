@@ -17,8 +17,8 @@
 void initialisation(struct poisson *P, double x_max, double y_max){
     /*Initialise la position et l'orientation du poisson aléatoirement*/
     // On se place dans un rectangle [0;x_max]*[0;y_max]
-    P->x = (double)rand()/(double)RAND_MAX * x_max;
-    P->y = (double)rand()/(double)RAND_MAX * y_max;
+    P->x   = (double)rand()/(double)RAND_MAX * x_max;
+    P->y   = (double)rand()/(double)RAND_MAX * y_max;
     P->dir = (double)rand()/(double)RAND_MAX * 360;
 }
 
@@ -94,8 +94,8 @@ double arg_dist_poissons(struct poisson P1, struct poisson P2){
 double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int indP){
     // indices_zr: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZR du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de la répulsion
-    double COS=0;
-    double SIN=0;
+    double COS = 0;
+    double SIN = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
                 if( j != indP){
@@ -103,10 +103,7 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
                     SIN = SIN + indices_zr[j]*( sin( (2*M_PI/360) * arg_dist_poissons(banc[indP], banc[j])) );   
                 }
             }
-            
-        
-
-            
+                
             if(zone == 1){
                 SIN = SIN-10;
             }
@@ -147,8 +144,8 @@ double repulsion(int* indices_zr, int N, struct poisson* banc, int zone, int ind
 double attraction(int* indices_za, int N, struct poisson* banc, int indP){
     // indices_za: Liste de 1 ou 0 indiquant si le poisson du même indice est dans la ZA du poisson i
     // Renvoie la nouvelle direction du poisson, dans le cas de l'attraction
-    double COS=0;
-    double SIN=0;
+    double COS = 0;
+    double SIN = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
                 if( j != indP){
@@ -172,8 +169,8 @@ double orientation(int* indices_zo, int N, struct poisson* banc){
     // Théoriquement, on aurait besoin de la vitesse, mais la vitesse du poisson et sa direction sont colinéaires. 
     // On n'a donc pas besoin de la prendre en compte. 
     // Cette fonction entre dans le cas d'une même vitesse pour tous les poissons, sinon il faut créer une liste des vitesses en amont. 
-    double COS=0;
-    double SIN=0;
+    double COS = 0;
+    double SIN = 0;
     double tmp = 0;
             for(int j=0; j<N; j++){
                 COS = COS + indices_zo[j]*( cos( (2*M_PI/360) * banc[j].dir) );
