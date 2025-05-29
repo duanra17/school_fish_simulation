@@ -1,7 +1,15 @@
 # In104
 BATS Paul,
 BRISSET Arnaud
+[ English ]
+The aim of this code is to simulate the behavior of a school of fish and displaying it in a graphic window.
 
+The useful functions for the simulation can be found in the file 'fonctions.c'.
+
+To execute the code, type 'make' in a bash terminal, then execute the executable ("main.x").
+
+
+[ French ]
 Le but de ce code est de simuler le comportement d'un banc de poissons et de le représenter dans une fenêtre graphique. 
 
 Les fonctions utiles à la simulation sont contenues dans le fichier 'fonctions.c'.
