@@ -8,5 +8,6 @@ Les fonctions utiles à la simulation sont contenues dans le fichier 'fonctions.
 
 Pour exécuter le code, exécuter la commande 'make' dans un terminal bash puis exécuter l'exécutable ("main.x").
 
-![image](https://github.com/user-attachments/assets/acf27874-c1cd-46b1-8c16-a9f67ceb7a04)
+![image](https://github.com/user-attachments/assets/7c4af90c-5a95-4f2d-bc6c-789397b9e8f4)
+
 
